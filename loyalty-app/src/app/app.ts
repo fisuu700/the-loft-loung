@@ -47,7 +47,7 @@ import {
       }
 
       <!-- Main Content -->
-      <main class="animate-fade-in pb-24">
+      <main class="animate-fade-in pb-40">
         <router-outlet></router-outlet>
       </main>
 

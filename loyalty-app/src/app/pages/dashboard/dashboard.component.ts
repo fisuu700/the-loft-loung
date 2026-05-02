@@ -19,7 +19,7 @@ import {
   standalone: true,
   imports: [CommonModule, LucideAngularModule],
   template: `
-    <div class="animate-fade-in px-4 md:px-12 py-10">
+    <div class="animate-fade-in px-4 md:px-12 py-10 pb-20">
       <div class="w-full space-y-12 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-14">
         
         <!-- Welcome Section (Full width on grid) -->
