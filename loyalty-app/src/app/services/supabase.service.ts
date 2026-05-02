@@ -11,7 +11,19 @@ export class SupabaseService {
   constructor() {
     this.supabase = createClient(
       environment.supabaseUrl,
-      environment.supabaseKey
+      environment.supabaseKey,
+      {
+        auth: {
+          storage: window.localStorage,
+          autoRefreshToken: true,
+          persistSession: true,
+          detectSessionInUrl: true,
+          lock: async (name: string, acquireTimeout: number, acquire: () => Promise<any>) => {
+            // Bypass LockManager which causes errors in some environments
+            return await acquire();
+          }
+        }
+      }
     );
   }
 
