@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar-TN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>The Loft | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#f8f9fa] text-[#333]">
+    <div class="max-w-md mx-auto min-h-screen pb-24 px-6 pt-10">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-10 animate-up">
+            <div>
+                <h1 class="text-3xl font-bold text-italic text-gold" style="font-family: 'Playfair Display', serif;">The Loft</h1>
+                <p class="text-[#888] text-sm font-medium">Marhba bik, <span id="username">Member</span></p>
+            </div>
+            <div id="avatarContainer" class="w-12 h-12 rounded-full overflow-hidden border border-[#eee] bg-white flex items-center justify-center font-bold text-gold">
+                ?
+            </div>
+        </div>
+
+        <!-- Points Card -->
+        <div class="card-clean mb-8 animate-up" style="animation-delay: 0.1s;">
+            <p class="text-[#888] text-[10px] font-bold uppercase letter-spacing-1 mb-1">El N9at Mte3ek</p>
+            <div class="flex items-baseline gap-2 mb-6">
+                <span id="totalPoints" class="text-5xl font-bold text-[#333]">0</span>
+                <span class="text-gold font-bold">PTS</span>
+            </div>
+
+            <!-- Progress -->
+            <div class="space-y-3">
+                <div class="flex justify-between items-center text-[11px] font-bold uppercase text-[#888]">
+                    <span>Progrès ☕ gratuit</span>
+                    <span id="progressPercent" class="text-gold">0%</span>
+                </div>
+                <div class="progress-container">
+                    <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+                </div>
+                <p id="remainingMsg" class="text-[11px] text-[#888] text-center font-medium italic">---</p>
+            </div>
+        </div>
+
+        <!-- Check-in Action -->
+        <div id="actionArea" class="mb-10 animate-up" style="animation-delay: 0.2s;">
+            <button onclick="handleCheckIn()" id="checkBtn" class="btn-dark w-full py-5">
+                Marque Présence <span style="font-size: 18px;">→</span>
+            </button>
+        </div>
+
+        <!-- Milestones -->
+        <div class="animate-up" style="animation-delay: 0.3s;">
+            <h3 class="text-xs font-bold text-[#888] uppercase tracking-wider mb-4">🎯 El Hadéf</h3>
+            <div id="milestonesList" class="space-y-4">
+                <!-- Milestones injected here -->
+            </div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <a href="dashboard.html" class="nav-item active">
+                <i data-lucide="home"></i>
+                <span>Home</span>
+            </a>
+            <a href="leaderboard.html" class="nav-item">
+                <i data-lucide="trophy"></i>
+                <span>Elite</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i data-lucide="user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="admin.html" id="adminLink" class="nav-item hidden">
+                <i data-lucide="settings"></i>
+                <span>Admin</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        const milestones = [
+            { points: 50, icon: '🧁', label: 'Pâtisserie gratuite' },
+            { points: 100, icon: '☕', label: '9ahwa gratuite!' }
+        ];
+
+        async function updateUI() {
+            if (!currentProfile) return;
+
+            document.getElementById('username').innerText = currentProfile.username;
+            document.getElementById('totalPoints').innerText = currentProfile.total_points;
+            
+            if (currentProfile.avatar_url) {
+                document.getElementById('avatarContainer').innerHTML = `<img src="${currentProfile.avatar_url}" class="w-full h-full object-cover">`;
+            } else {
+                document.getElementById('avatarContainer').innerText = currentProfile.username[0].toUpperCase();
+            }
+
+            const pts = currentProfile.total_points || 0;
+            const progress = Math.min((pts % 100), 100);
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressPercent').innerText = progress + '%';
+            
+            const remaining = 100 - (pts % 100);
+            document.getElementById('remainingMsg').innerText = `${remaining} n9at ba9yin lel 9ahwa 🎉`;
+
+            const done = await checkTodayStatus();
+            if (done) {
+                document.getElementById('actionArea').innerHTML = `
+                    <div class="w-full py-5 px-6 rounded-lg text-center border border-[#eee] bg-white">
+                        <p class="text-gold font-bold text-sm">✨ Tbarkallah 3lik!</p>
+                        <p class="text-[#888] text-[11px] mt-1 italic uppercase font-bold">Nchoufouk ghodwa inchallah!</p>
+                    </div>
+                `;
+            }
+
+            const list = document.getElementById('milestonesList');
+            list.innerHTML = milestones.map(m => `
+                <div class="card-clean flex items-center gap-4 p-4 ${pts >= m.points ? 'border-gold' : 'opacity-60'}">
+                    <span class="text-2xl">${m.icon}</span>
+                    <div class="flex-1">
+                        <p class="font-bold text-sm">${m.label}</p>
+                        <p class="text-[10px] text-[#888] font-bold uppercase tracking-wider">${m.points} Points</p>
+                    </div>
+                    ${pts >= m.points ? '<span class="text-gold text-lg">✓</span>' : `<span class="text-[#888] text-[10px] font-bold">${m.points - pts} TO GO</span>`}
+                </div>
+            `).join('');
+
+            if (currentProfile.role === 'barista') {
+                document.getElementById('adminLink').classList.remove('hidden');
+            }
+
+            lucide.createIcons();
+        }
+
+        async function handleCheckIn() {
+            const btn = document.getElementById('checkBtn');
+            btn.disabled = true;
+            btn.innerHTML = `<span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>`;
+            
+            const result = await performCheckIn();
+            if (result.success) {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#C1A35F', '#333'] });
+                await updateUI();
+            } else {
+                alert(result.message);
+                await updateUI();
+            }
+        }
+
+        window.addEventListener('load', async () => {
+            await initApp();
+            await updateUI();
+        });
+    </script>
+</body>
+</html>

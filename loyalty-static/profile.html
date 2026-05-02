@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar-TN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>The Loft Lounge | Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#0a0a0a] text-[#f0f0f0]">
+    <div class="max-w-md mx-auto min-h-screen relative shadow-2xl shadow-[#D4AF37]/5 pb-24 px-4 pt-6 overflow-hidden">
+        <div class="absolute bottom-0 left-0 w-full h-1/2 opacity-5 pointer-events-none"
+             style="background: linear-gradient(to top, #6F4E37, transparent)"></div>
+
+        <div class="relative z-10 mb-8 animate-slide-up">
+            <h1 class="text-3xl font-bold text-gradient-gold font-[Playfair Display]">Profile</h1>
+            <p class="text-[#888888] text-sm mt-1">El compte mte3ek 👤</p>
+        </div>
+
+        <div class="relative z-10 mb-8 animate-scale-in">
+            <div class="card-premium flex flex-col items-center text-center py-10">
+                <div class="relative mb-6">
+                    <div id="avatarLarge" class="w-24 h-24 rounded-full overflow-hidden border-4 border-[#D4AF37]/30 bg-[#111111] flex items-center justify-center text-3xl font-bold">
+                        ?
+                    </div>
+                    <div class="absolute -bottom-2 -right-2 bg-[#D4AF37] text-black w-8 h-8 rounded-full flex items-center justify-center border-4 border-[#1a1a1a]">
+                        <span class="text-xs">⭐</span>
+                    </div>
+                </div>
+                <h2 id="profileName" class="text-2xl font-bold">---</h2>
+                <p id="profileEmail" class="text-[#888888] text-sm">---</p>
+                <div class="mt-6">
+                    <span id="profileRole" class="px-4 py-1 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-bold border border-[#D4AF37]/20 uppercase tracking-widest">Member</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative z-10 space-y-4 animate-slide-up" style="animation-delay: 0.1s;">
+            <div class="card-premium flex items-center justify-between p-4">
+                <div class="flex items-center gap-4">
+                    <span class="text-xl">📊</span>
+                    <div>
+                        <p class="font-semibold">Total Points</p>
+                        <p class="text-xs text-[#888888]">Koll el n9at elli lammethom</p>
+                    </div>
+                </div>
+                <span id="pointsValue" class="text-xl font-bold text-[#D4AF37]">0</span>
+            </div>
+
+            <button onclick="logout()" class="w-full card-premium flex items-center gap-4 p-4 text-red-400 border-red-500/20 hover:bg-red-500/5 transition-colors">
+                <span class="text-xl">🚪</span>
+                <span class="font-semibold">O5roj (Logout)</span>
+            </button>
+        </div>
+
+        <!-- Bottom Nav -->
+        <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto glass border-t border-[#D4AF37]/10 px-6 py-3 z-50 flex items-center justify-between safe-bottom">
+            <a href="dashboard.html" class="flex flex-col items-center gap-1 text-[#888888]">
+                <i data-lucide="home" class="w-6 h-6"></i>
+                <span class="text-[10px] uppercase tracking-widest">Home</span>
+            </a>
+            <a href="leaderboard.html" class="flex flex-col items-center gap-1 text-[#888888]">
+                <i data-lucide="trophy" class="w-6 h-6"></i>
+                <span class="text-[10px] uppercase tracking-widest">Elite</span>
+            </a>
+            <div class="w-12 h-12 -mt-10 bg-gradient-to-tr from-[#D4AF37] to-[#e8c84a] rounded-full shadow-lg shadow-[#D4AF37]/20 flex items-center justify-center border-4 border-[#0a0a0a] animate-float">
+                 <i data-lucide="coffee" class="text-black w-6 h-6"></i>
+            </div>
+            <a href="profile.html" class="nav-active flex flex-col items-center gap-1 text-[#D4AF37] relative">
+                <i data-lucide="user" class="w-6 h-6"></i>
+                <span class="text-[10px] uppercase tracking-widest">Profile</span>
+            </a>
+            <a href="admin.html" id="adminLink" class="hidden flex flex-col items-center gap-1 text-[#888888]">
+                <i data-lucide="settings" class="w-6 h-6"></i>
+                <span class="text-[10px] uppercase tracking-widest">Admin</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        async function updateUI() {
+            if (!currentProfile) return;
+            document.getElementById('profileName').innerText = currentProfile.username;
+            document.getElementById('profileEmail').innerText = currentUser.email;
+            document.getElementById('pointsValue').innerText = currentProfile.total_points;
+            document.getElementById('profileRole').innerText = currentProfile.role || 'Member';
+
+            if (currentProfile.avatar_url) {
+                document.getElementById('avatarLarge').innerHTML = `<img src="${currentProfile.avatar_url}" class="w-full h-full object-cover">`;
+            } else {
+                document.getElementById('avatarLarge').innerText = currentProfile.username[0].toUpperCase();
+            }
+
+            if (currentProfile.role === 'barista') {
+                document.getElementById('adminLink').classList.remove('hidden');
+            }
+            lucide.createIcons();
+        }
+
+        window.addEventListener('load', async () => {
+            await initApp();
+            await updateUI();
+        });
+    </script>
+</body>
+</html>

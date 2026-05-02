@@ -1,0 +1,1967 @@
+/* ========================================
+   THE LOFT LOUNGE - DESIGN AVEC PHOTOS RÉELLES
+   Intégration totale des images intérieures
+   ======================================== */
+
+
+:root {
+    /* Enhanced Color Palette */
+    --sage-green: #8B9A7A;
+    --sage-light: #A8B89D;
+    --sage-dark: #6E7D5F;
+    --olive-wall: #9DA87E;
+    --primary-gold: #D4AF37;
+    --gold-light: #E8C968;
+    --gold-accent: #C9A959;
+    --white-marble: #F5F5F0;
+    --white-pure: #FFFFFF;
+    --pink-blossom: #E5A8C8;
+    --pink-soft: #F3C0A2;
+    --pink-vivid: #A794D4;
+    --gray-modern: #8B8B8B;
+    --gray-dark: #4A4A4A;
+    --gray-light: #E8E8E8;
+    --green-carpet: #2F5D3E;
+    --green-deep: #1A3A28;
+
+    /* Typography */
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Lato', sans-serif;
+
+    /* Advanced Effects */
+    --transition-fast: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    --transition-slow: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 30px 90px rgba(0, 0, 0, 0.2);
+    --shadow-gold: 0 15px 45px rgba(212, 175, 55, 0.3);
+    --shadow-pink: 0 15px 45px rgba(255, 184, 209, 0.3);
+    --shadow-green: 0 15px 45px rgba(139, 154, 122, 0.3);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes glow {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 5px currentColor);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 20px currentColor);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    background: linear-gradient(135deg, var(--white-marble) 0%, var(--white-pure) 50%, #FAF9F5 100%);
+    color: var(--gray-dark);
+    line-height: 1.7;
+    position: relative;
+    overflow-x: clip;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(circle at 20% 50%, rgba(139, 154, 122, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 184, 209, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ========================================
+   NAVIGATION - Photo de l'enseigne en arrière-plan
+   ======================================== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(250, 249, 245, 0.92));
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        0 2px 8px rgba(139, 154, 122, 0.1),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.8);
+    border-bottom: 3px solid transparent;
+    border-image: linear-gradient(90deg, var(--sage-green), var(--primary-gold), var(--pink-blossom), var(--sage-green)) 1;
+    z-index: 1000;
+    transition: var(--transition);
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.navbar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('assets/images/loft_entrance_neon.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.08;
+    z-index: -1;
+}
+
+.navbar.scrolled {
+    padding: 10px 0;
+    background: rgba(255, 255, 255, 0.98);
+    border-bottom: 3px solid var(--sage-green);
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+.logo {
+    font-family: var(--font-heading);
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--sage-green);
+    letter-spacing: 4px;
+    text-decoration: none;
+    text-transform: uppercase;
+    position: relative;
+    background: linear-gradient(90deg,
+            var(--sage-green) 0%,
+            var(--primary-gold) 50%,
+            var(--sage-green) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    filter: drop-shadow(0 2px 8px rgba(139, 154, 122, 0.3));
+    transition: var(--transition);
+    animation: shimmer 3s linear infinite;
+}
+
+.logo:hover {
+    filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.6));
+    transform: scale(1.05);
+}
+
+.logo span {
+    color: var(--primary-gold);
+    text-shadow:
+        0 0 15px rgba(212, 175, 55, 0.6),
+        0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.nav-links {
+    display: flex;
+    gap: 50px;
+    list-style: none;
+}
+
+.nav-links a {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gray-dark);
+    text-decoration: none;
+    position: relative;
+    padding: 10px 5px;
+    transition: var(--transition);
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--pink-blossom), var(--primary-gold));
+    transition: var(--transition);
+    transform: translateX(-50%);
+}
+
+.nav-links a:hover {
+    color: var(--sage-green);
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+.nav-links a.active::after {
+    width: 100%;
+}
+
+.nav-toggle {
+    display: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--sage-green);
+}
+
+/* ========================================
+   HERO SECTION - Photo salle principale
+   ======================================== */
+.hero {
+    height: 100vh;
+    background-image: url('assets/images/main_dining_area.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg,
+            rgba(47, 93, 62, 0.7) 0%,
+            rgba(139, 154, 122, 0.6) 30%,
+            rgba(255, 255, 255, 0.4) 60%,
+            rgba(255, 184, 209, 0.5) 100%);
+    z-index: 1;
+}
+
+.hero-overlay {
+    display: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1000px;
+    padding: 80px 60px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 5px solid var(--primary-gold);
+    border-radius: 20px;
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.3),
+        inset 0 2px 0 rgba(255, 255, 255, 1),
+        0 0 0 15px rgba(139, 154, 122, 0.2);
+}
+
+.hero h1 {
+    font-family: var(--font-heading);
+    font-size: 5rem;
+    margin-bottom: 25px;
+    color: var(--sage-green);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow:
+        0 0 20px rgba(255, 184, 209, 0.5),
+        0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.hero h1 .highlight {
+    color: transparent;
+    background: linear-gradient(135deg, var(--sage-green), var(--primary-gold), var(--pink-blossom));
+    -webkit-background-clip: text;
+    background-clip: text;
+    font-style: italic;
+}
+
+.hero p {
+    font-size: 1.7rem;
+    margin-bottom: 55px;
+    font-weight: 400;
+    color: var(--gray-dark);
+    letter-spacing: 2.5px;
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.3s forwards;
+}
+
+.hero-btns {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ========================================
+   BUTTONS - Style inspiré des accents du café
+   ======================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 50px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    font-size: 0.95rem;
+    border-radius: 50px;
+    transition: var(--transition);
+    cursor: pointer;
+    border: 3px solid;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.15),
+        0 1px 4px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+    z-index: -1;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease;
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.btn:active::after {
+    transform: translate(-50%, -50%) scale(2);
+    transition: transform 0s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--sage-green) 0%, var(--sage-light) 50%, var(--olive-wall) 100%);
+    color: var(--white-pure);
+    border-color: var(--sage-green);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary::before {
+    background: linear-gradient(135deg, var(--primary-gold), var(--gold-light));
+}
+
+.btn-primary:hover::before {
+    width: 500px;
+    height: 500px;
+}
+
+.btn-primary:hover {
+    border-color: var(--gold-light);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow:
+        0 20px 50px rgba(212, 175, 55, 0.4),
+        0 10px 20px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.btn-outline {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: var(--primary-gold);
+    border-color: var(--primary-gold);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline::before {
+    background: linear-gradient(135deg, var(--primary-gold), var(--pink-blossom), var(--pink-vivid));
+}
+
+.btn-outline:hover {
+    color: var(--white-pure);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow:
+        0 20px 50px rgba(255, 184, 209, 0.5),
+        0 10px 20px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.btn-outline:hover::before {
+    width: 500px;
+    height: 500px;
+}
+
+/* ========================================
+   LOYALTY PREMIUM BUTTON
+   ======================================== */
+.btn-loyalty-premium {
+    background: linear-gradient(135deg, #D4AF37 0%, #E8C968 50%, #C9A959 100%) !important;
+    color: #000 !important;
+    border: none !important;
+    text-decoration: none !important;
+    text-decoration-line: none !important;
+    outline: none !important;
+    font-weight: 800 !important;
+    box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4) !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-loyalty-premium::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 20%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: rotate(30deg);
+    transition: all 0.6s ease;
+    filter: blur(10px);
+}
+
+.btn-loyalty-premium:hover {
+    transform: translateY(-8px) scale(1.05) !important;
+    box-shadow: 0 20px 60px rgba(212, 175, 55, 0.6) !important;
+}
+
+.btn-loyalty-premium:hover::after {
+    left: 130%;
+}
+
+.nav-loyalty-premium {
+    background: var(--primary-gold);
+    color: #000 !important;
+    padding: 8px 20px !important;
+    border-radius: 50px;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.nav-loyalty-premium:hover {
+    transform: scale(1.1);
+    background: var(--gold-light);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+}
+
+/* ========================================
+   ABOUT SECTION - Photo mur vert sauge
+   ======================================== */
+.section {
+    padding: 120px 0;
+    position: relative;
+}
+
+.about {
+    background:
+        linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.95),
+            rgba(245, 245, 240, 0.98)),
+        url('assets/images/interior_sage_wall.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 80px;
+    position: relative;
+}
+
+.section-header h2 {
+    font-family: var(--font-heading);
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--sage-green), var(--olive-wall), var(--sage-green));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.section-header h2::after {
+    display: none;
+}
+
+.separator {
+    width: 150px;
+    height: 5px;
+    background: linear-gradient(to right, var(--pink-blossom), var(--primary-gold), var(--sage-green));
+    margin: 25px auto;
+    border-radius: 3px;
+    box-shadow: 0 3px 15px rgba(212, 175, 55, 0.4);
+}
+
+.section-header p {
+    font-size: 1.2rem;
+    color: var(--gray-modern);
+    font-style: italic;
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+}
+
+.about-text p {
+    margin-bottom: 25px;
+    color: var(--gray-dark);
+    font-size: 1.15rem;
+    text-align: justify;
+    line-height: 1.9;
+}
+
+.about-text strong {
+    color: var(--sage-green);
+    font-weight: 700;
+}
+
+.about-features {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+}
+
+.feature-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(250, 249, 245, 0.95));
+    backdrop-filter: blur(15px);
+    padding: 40px 35px;
+    text-align: center;
+    border: 3px solid var(--sage-green);
+    border-left: 10px solid var(--primary-gold);
+    border-radius: 15px;
+    transition: var(--transition);
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+    animation: float 6s ease-in-out infinite;
+}
+
+.feature-card:nth-child(2) {
+    animation-delay: 1s;
+}
+
+.feature-card:nth-child(3) {
+    animation-delay: 2s;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, var(--pink-soft), transparent);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.feature-card:hover::before {
+    opacity: 0.6;
+    width: 200px;
+    height: 200px;
+}
+
+.feature-card:hover {
+    transform: translateX(15px) scale(1.05);
+    border-color: var(--gold-light);
+    box-shadow:
+        0 20px 60px rgba(212, 175, 55, 0.3),
+        0 8px 25px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+    animation-play-state: paused;
+}
+
+.feature-card i {
+    font-size: 3rem;
+    color: var(--primary-gold);
+    margin-bottom: 20px;
+    display: block;
+}
+
+.feature-card h3 {
+    font-size: 1.4rem;
+    color: var(--sage-green);
+    margin-bottom: 0;
+    font-family: var(--font-heading);
+}
+
+/* ========================================
+   MENU SECTION - Fond avec image floue
+   ======================================== */
+.menu-section {
+    background:
+        linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.97),
+            rgba(245, 245, 240, 0.95)),
+        url('assets/images/main_dining_area.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+    margin-bottom: 60px;
+}
+
+.menu-item {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(250, 249, 245, 0.95));
+    backdrop-filter: blur(10px);
+    padding: 45px;
+    border: 3px solid var(--sage-green);
+    border-top: 8px solid var(--primary-gold);
+    border-radius: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transform-style: preserve-3d;
+}
+
+.menu-item::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: all 0.8s ease;
+    pointer-events: none;
+}
+
+.menu-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, var(--pink-blossom), var(--primary-gold), var(--pink-blossom));
+    transform: scaleX(0);
+    transition: transform 0.5s ease;
+}
+
+.menu-item:hover {
+    transform: translateY(-10px) scale(1.03) rotateX(5deg);
+    border-color: var(--gold-light);
+    box-shadow:
+        0 25px 70px rgba(212, 175, 55, 0.3),
+        0 10px 30px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.menu-item:hover::before {
+    opacity: 1;
+    top: -10%;
+    right: -10%;
+}
+
+.menu-item:hover::after {
+    transform: scaleX(1);
+}
+
+.menu-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--sage-green), var(--olive-wall));
+    border-radius: 50%;
+    box-shadow: 0 5px 20px rgba(139, 154, 122, 0.3);
+}
+
+.menu-icon i {
+    font-size: 2.2rem;
+    color: var(--white-pure);
+}
+
+.menu-details h3 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+    color: var(--sage-green);
+    font-family: var(--font-heading);
+}
+
+.menu-details p {
+    color: var(--gray-modern);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.menu-cta {
+    text-align: center;
+}
+
+/* ========================================
+   SERVICES SECTION - Fond escalier fleuri
+   ======================================== */
+.services {
+    background:
+        linear-gradient(135deg,
+            rgba(47, 93, 62, 0.92),
+            rgba(139, 154, 122, 0.88),
+            rgba(255, 184, 209, 0.85)),
+        url('assets/images/staircase_flowers.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    text-align: center;
+}
+
+.services .section-header h2 {
+    background: linear-gradient(135deg, var(--white-pure), var(--pink-soft), var(--white-pure));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.services .separator {
+    background: linear-gradient(to right, var(--pink-blossom), var(--white-pure), var(--primary-gold));
+    box-shadow: 0 3px 20px rgba(255, 255, 255, 0.5);
+}
+
+.services .section-header p {
+    color: var(--white-pure);
+    font-size: 1.3rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.services-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+.service-box {
+    flex: 1;
+    min-width: 300px;
+    max-width: 350px;
+    padding: 60px 40px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(15px);
+    border: 4px solid var(--primary-gold);
+    border-radius: 20px;
+    transition: var(--transition);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+}
+
+.service-box:hover {
+    transform: scale(1.08) rotate(2deg);
+    border-color: var(--pink-blossom);
+    box-shadow: 0 20px 60px rgba(255, 184, 209, 0.5);
+}
+
+.service-box i {
+    font-size: 4rem;
+    color: var(--sage-green);
+    margin-bottom: 30px;
+    display: block;
+    text-shadow: 0 4px 15px rgba(139, 154, 122, 0.3);
+}
+
+.service-box h3 {
+    color: var(--sage-green);
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    font-family: var(--font-heading);
+}
+
+.service-box p {
+    color: var(--gray-dark);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* ========================================
+   GALLERY SECTION - Photos réelles du café
+   ======================================== */
+#gallery {
+    background: linear-gradient(to bottom, var(--white-marble), var(--white-pure));
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 35px;
+    margin-top: 60px;
+}
+
+.gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 5px solid var(--sage-green);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    aspect-ratio: 4/3;
+    transition: var(--transition);
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+    border-color: var(--primary-gold);
+    box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.gallery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg,
+            rgba(139, 154, 122, 0.95),
+            rgba(255, 184, 209, 0.85));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--transition);
+    color: var(--white-pure);
+}
+
+.gallery-item:hover .gallery-overlay {
+    opacity: 1;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.2);
+}
+
+.gallery-overlay i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: var(--primary-gold);
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-overlay p {
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+   TESTIMONIALS - Fond mur floral
+   ======================================== */
+.testimonials-section {
+    background:
+        linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.95),
+            rgba(255, 184, 209, 0.3)),
+        url('assets/images/pink_flowers_wall.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 45px;
+}
+
+.testimonial-card {
+    background: rgba(255, 255, 255, 0.98);
+    padding: 45px;
+    border-radius: 20px;
+    border: 4px solid var(--pink-soft);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.12);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.testimonial-card::before {
+    content: '"';
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    font-size: 8rem;
+    font-family: var(--font-heading);
+    color: var(--pink-blossom);
+    opacity: 0.2;
+    line-height: 1;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--primary-gold);
+    box-shadow: 0 20px 60px rgba(212, 175, 55, 0.25);
+}
+
+.testimonial-stars {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 1;
+}
+
+.testimonial-stars i {
+    color: var(--primary-gold);
+    font-size: 1.4rem;
+    text-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+}
+
+.testimonial-text {
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: var(--gray-dark);
+    margin-bottom: 30px;
+    font-style: italic;
+    position: relative;
+    z-index: 1;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.author-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--sage-green), var(--olive-wall));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white-pure);
+    font-size: 1.8rem;
+    box-shadow: 0 5px 20px rgba(139, 154, 122, 0.3);
+}
+
+.author-info h4 {
+    font-size: 1.2rem;
+    color: var(--sage-green);
+    margin-bottom: 5px;
+    font-family: var(--font-heading);
+}
+
+.author-info p {
+    font-size: 0.95rem;
+    color: var(--gray-modern);
+}
+
+/* ========================================
+   CONTACT SECTION - Design moderne
+   ======================================== */
+.contact {
+    background: linear-gradient(to bottom, var(--white-pure), var(--white-marble));
+}
+
+.contact-container {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 0;
+    background: var(--white-pure);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15);
+    border: 5px solid var(--sage-green);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.contact-info {
+    padding: 80px 50px;
+    background:
+        linear-gradient(135deg,
+            rgba(139, 154, 122, 0.95),
+            rgba(157, 168, 126, 0.9)),
+        url('assets/images/interior_sage_wall.jpg');
+    background-size: cover;
+    background-position: center;
+    border-right: 5px solid var(--primary-gold);
+    position: relative;
+}
+
+.contact-info h2 {
+    color: var(--white-pure);
+    font-size: 2.5rem;
+    text-align: left;
+    margin-bottom: 40px;
+    text-shadow: 0 3px 15px rgba(0, 0, 0, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.contact-info h2::after {
+    display: none;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 35px;
+}
+
+.info-item i {
+    color: var(--primary-gold);
+    font-size: 1.5rem;
+    width: 50px;
+    height: 50px;
+    border: 3px solid var(--primary-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+}
+
+.info-item span {
+    color: var(--white-pure);
+    font-size: 1.1rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.social-links {
+    margin-top: 60px;
+    display: flex;
+    gap: 20px;
+}
+
+.social-links a {
+    width: 55px;
+    height: 55px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white-pure);
+    font-size: 1.5rem;
+    transition: var(--transition);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.social-links a:hover {
+    background: var(--primary-gold);
+    color: var(--sage-green);
+    border-color: var(--primary-gold);
+    transform: scale(1.15) rotate(10deg);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+}
+
+.contact-form {
+    padding: 80px 60px;
+    background: var(--white-pure);
+}
+
+.form-group {
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--sage-green);
+    font-weight: 600;
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 18px 20px;
+    background: rgba(139, 154, 122, 0.08);
+    border: 3px solid var(--sage-green);
+    color: var(--gray-dark);
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    transition: var(--transition);
+    border-radius: 12px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: var(--primary-gold);
+    background: var(--white-pure);
+    outline: none;
+    box-shadow: 0 0 0 5px rgba(212, 175, 55, 0.15);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+footer {
+    background: linear-gradient(135deg, var(--green-carpet), var(--sage-green-dark));
+    color: var(--white-pure);
+    padding: 50px 0;
+    text-align: center;
+    font-size: 1rem;
+    border-top: 5px solid var(--primary-gold);
+}
+
+/* ========================================
+   MODALS - Style moderne
+   ======================================== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(47, 93, 62, 0.95);
+    backdrop-filter: blur(15px);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: var(--white-pure);
+    border: 5px solid var(--primary-gold);
+    border-radius: 20px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.5);
+    animation: modalZoom 0.4s ease;
+}
+
+@keyframes modalZoom {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-content.modal-large {
+    max-width: 1200px;
+}
+
+.modal-header {
+    padding: 40px;
+    border-bottom: 3px solid var(--sage-green);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to right, rgba(139, 154, 122, 0.1), transparent);
+}
+
+.modal-header h2 {
+    font-size: 2.2rem;
+    margin: 0;
+    color: var(--sage-green);
+    text-transform: uppercase;
+    font-family: var(--font-heading);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 3rem;
+    color: var(--gray-modern);
+    cursor: pointer;
+    transition: var(--transition);
+    line-height: 1;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal-close:hover {
+    color: var(--primary-gold);
+    background: rgba(212, 175, 55, 0.1);
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 50px;
+}
+
+.modal-form {
+    padding: 50px;
+}
+
+.menu-category {
+    margin-bottom: 60px;
+}
+
+.menu-category h3 {
+    font-size: 1.8rem;
+    color: var(--sage-green);
+    border-bottom: 3px solid var(--primary-gold);
+    padding-bottom: 20px;
+    margin-bottom: 35px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+}
+
+.menu-category h3 i {
+    color: var(--primary-gold);
+}
+
+.menu-items-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 35px;
+}
+
+.menu-item-detail {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background: rgba(139, 154, 122, 0.05);
+    border-radius: 12px;
+    border-left: 4px solid var(--sage-green);
+    transition: var(--transition);
+}
+
+.menu-item-detail:hover {
+    background: rgba(255, 184, 209, 0.1);
+    border-left-color: var(--primary-gold);
+    transform: translateX(5px);
+}
+
+.item-info h4 {
+    font-size: 1.2rem;
+    color: var(--sage-green);
+    margin-bottom: 8px;
+    font-family: var(--font-heading);
+}
+
+.item-info p {
+    color: var(--gray-modern);
+    font-size: 0.95rem;
+    font-style: italic;
+}
+
+.price {
+    font-weight: 700;
+    color: var(--primary-gold);
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    white-space: nowrap;
+    margin-left: 20px;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 30px;
+    }
+
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 50px;
+    }
+
+    .contact-container {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-info {
+        border-right: none;
+        border-bottom: 5px solid var(--primary-gold);
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.98);
+        flex-direction: column;
+        padding: 40px;
+        gap: 30px;
+        border-bottom: 3px solid var(--primary-gold);
+        transform: translateY(-20px);
+        opacity: 0;
+        pointer-events: none;
+        transition: var(--transition);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-links.active {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+    }
+
+    .hero-content {
+        padding: 50px 35px;
+    }
+
+    .hero-btns {
+        flex-direction: column;
+    }
+
+    .section-header h2 {
+        font-size: 2.5rem;
+    }
+
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .services-wrapper {
+        flex-direction: column;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    /* Prevent decorative flowers from causing horizontal overflow */
+    .section,
+    .about,
+    .menu-section,
+    .services,
+    .contact,
+    footer {
+        overflow-x: clip;
+    }
+
+    /* Hide large footer flower decorations on mobile */
+    footer::before,
+    footer::after {
+        display: none;
+    }
+
+    /* Reduce section header flower sizes on mobile */
+    .section-header::before,
+    .section-header::after {
+        width: 150px;
+        height: 150px;
+        opacity: 0.3;
+    }
+}
+
+/* ========================================
+   NOTIFICATION TOAST
+   ======================================== */
+.notification {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(250, 249, 245, 0.95));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 20px 30px;
+    border-radius: 15px;
+    border: 3px solid var(--sage-green);
+    border-left: 8px solid var(--primary-gold);
+    box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.2),
+        0 5px 15px rgba(139, 154, 122, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    opacity: 0;
+    transform: translateY(100px);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: none;
+    z-index: 10000;
+    min-width: 300px;
+    max-width: 500px;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+}
+
+.notification i {
+    font-size: 1.8rem;
+    color: var(--sage-green);
+    animation: glow 2s ease-in-out infinite;
+}
+
+.notification span {
+    color: var(--gray-dark);
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.notification.error {
+    border-color: #FF6B6B;
+    border-left-color: #FF6B6B;
+}
+
+.notification.error i {
+    color: #FF6B6B;
+}
+
+@media (max-width: 768px) {
+    .notification {
+        bottom: 100px;
+        right: 20px;
+        left: 20px;
+        min-width: auto;
+    }
+}
+
+/* ========================================
+   SECTION FLEURIE - STYLE PERSONNALISÉ
+   ======================================== */
+.section-fleurie {
+  border: 2px solid #e0e0e0;
+  position: relative;
+  padding: 50px;
+  margin: 20px;
+  border-radius: 8px;
+  background: white;
+}
+
+/* Ajoute une fleur dans chaque coin */
+.section-fleurie::before, .section-fleurie::after {
+  content: "🌸";
+  position: absolute;
+  font-size: 2rem;
+}
+
+.section-fleurie::before {
+  top: -15px;
+  left: -15px;
+}
+
+.section-fleurie::after {
+  bottom: -15px;
+  right: -15px;
+}
+
+/* ========================================
+   PREMIUM FRAMED HERO WITH BEIGE FLOWERS
+   ======================================== */
+.premium-framed-hero {
+    position: relative;
+    height: 100vh;
+    min-height: 800px;
+    background: url('assets/images/main_dining_area.jpg') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.premium-framed-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.3); /* subtle light overlay */
+    backdrop-filter: blur(8px);
+}
+
+.premium-frame {
+    position: relative;
+    background: #FDFBF7;
+    border-radius: 20px;
+    padding: 80px 100px;
+    text-align: center;
+    z-index: 5;
+    box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.3),
+        inset 0 0 0 10px rgba(212, 175, 55, 0.1);
+    border: 3px solid #D4AF37;
+    max-width: 1000px;
+    width: 90%;
+}
+
+/* Base floral style (integrated, no circles) */
+.flower-circle {
+    position: absolute;
+    background-image: url('assets/images/3d_flowers.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: drop-shadow(0 15px 35px rgba(0,0,0,0.2));
+    opacity: 1;
+    z-index: 10;
+    animation: flowerFloat 8s ease-in-out infinite;
+    pointer-events: none;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+@keyframes flowerFloat {
+    0%, 100% {
+        translate: 0 0;
+        scale: 1;
+    }
+    50% {
+        translate: 0 -15px;
+        scale: 1.03;
+    }
+}
+
+/* Specific circle positions */
+.circle-tl-main {
+    width: 200px; height: 200px;
+    top: -80px; left: -80px;
+}
+.circle-tl-sub {
+    width: 100px; height: 100px;
+    top: -10px; left: 100px;
+}
+
+.circle-tr-main {
+    width: 250px; height: 250px;
+    top: -100px; right: -100px;
+    transform: rotate(45deg);
+}
+.circle-tr-sub {
+    width: 120px; height: 120px;
+    top: 130px; right: -40px;
+}
+
+.circle-bl-main {
+    width: 220px; height: 220px;
+    bottom: -90px; left: -90px;
+    transform: rotate(180deg);
+}
+.circle-bl-sub {
+    width: 130px; height: 130px;
+    bottom: 100px; left: -50px;
+}
+
+.circle-br-main {
+    width: 180px; height: 180px;
+    bottom: -70px; right: -70px;
+    transform: rotate(-45deg);
+}
+.circle-br-sub {
+    width: 110px; height: 110px;
+    bottom: 90px; right: 50px;
+}
+
+.premium-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: #8B9A7A; /* Sage green tone */
+    letter-spacing: 4px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+.premium-highlight {
+    display: inline-block;
+    font-size: 4.5rem;
+    font-style: italic;
+    background: linear-gradient(135deg, #C5A059, #D4AF37, #E5C158);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+
+.premium-subtitle {
+    font-family: 'Lato', sans-serif;
+    color: #555;
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+}
+
+.hero-btns {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.premium-btn, .premium-btn-outline {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 15px 35px;
+    border-radius: 30px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.premium-btn {
+    background: #A3B18A;
+    color: white;
+    border: none;
+    box-shadow: 0 5px 15px rgba(163, 177, 138, 0.4);
+}
+.premium-btn:hover {
+    background: #8B9A7A;
+    transform: translateY(-2px);
+}
+
+.premium-btn-outline {
+    background: transparent;
+    color: #C5A059;
+    border: 2px solid #D4AF37;
+}
+.premium-btn-outline:hover {
+    background: rgba(212, 175, 55, 0.1);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .premium-title { font-size: 2rem; }
+    .premium-highlight { font-size: 3rem; }
+    .flower-circle { transform: scale(0.6); }
+    .premium-frame { padding: 50px 20px; }
+    .hero-btns { flex-direction: column; }
+}
+
+/* ========================================
+   GLOBAL FLORAL UI/UX INTEGRATION (ULTRA PREMIUM)
+   ======================================== */
+
+@keyframes luxuryAmbientFloat {
+    0% { 
+        transform: translate3d(0px, 0px, 0) rotate(var(--base-rotate)) scale(1); 
+    }
+    33% { 
+        transform: translate3d(8px, -12px, 0) rotate(calc(var(--base-rotate) + 4deg)) scale(1.04); 
+    }
+    66% { 
+        transform: translate3d(-6px, 10px, 0) rotate(calc(var(--base-rotate) - 3deg)) scale(0.98); 
+    }
+    100% { 
+        transform: translate3d(0px, 0px, 0) rotate(var(--base-rotate)) scale(1); 
+    }
+}
+
+/* 1. Section Headers */
+.section-header::before, .section-header::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background-image: url('assets/images/3d_flowers.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: -1;
+    animation: luxuryAmbientFloat 20s ease-in-out infinite;
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.section-header::before {
+    top: -120px;
+    left: -120px;
+    --base-rotate: -20deg;
+    transform: rotate(var(--base-rotate));
+    animation-delay: 0s;
+}
+
+.section-header::after {
+    bottom: -100px;
+    right: -100px;
+    --base-rotate: 15deg;
+    transform: rotate(var(--base-rotate));
+    animation-delay: -10s;
+}
+
+/* 2. Feature Cards (About Section) */
+.feature-card {
+    position: relative;
+}
+
+.feature-card::after {
+    content: '';
+    position: absolute;
+    bottom: -30px;
+    right: -30px;
+    width: 180px;
+    height: 180px;
+    background-image: url('assets/images/3d_flowers.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
+    opacity: 0.6;
+    pointer-events: none;
+    transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 0;
+    --base-rotate: 0deg;
+    transform: rotate(var(--base-rotate)) translateZ(0);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+.feature-card:hover::after {
+    --base-rotate: 20deg;
+    transform: scale(1.25) rotate(var(--base-rotate)) translate3d(-10px, -10px, 0);
+    opacity: 0.35;
+}
+
+/* 3. Menu Items */
+.menu-details::before {
+    content: '';
+    position: absolute;
+    bottom: -30px;
+    right: 0px;
+    width: 160px;
+    height: 160px;
+    background-image: url('assets/images/3d_flowers.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+    opacity: 0.6;
+    pointer-events: none;
+    transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 0;
+    --base-rotate: -10deg;
+    transform: rotate(var(--base-rotate)) translateZ(0);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+.menu-item:hover .menu-details::before {
+    --base-rotate: -25deg;
+    transform: scale(1.3) rotate(var(--base-rotate)) translate3d(-15px, 0, 0);
+    opacity: 0.35;
+}
+
+/* 4. Service Boxes */
+.service-box::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    left: -60px;
+    width: 220px;
+    height: 220px;
+    background-image: url('assets/images/3d_flowers.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+    opacity: 0.5;
+    pointer-events: none;
+    transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 0;
+    --base-rotate: 15deg;
+    transform: rotate(var(--base-rotate)) translateZ(0);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+.service-box:hover::after {
+    --base-rotate: 5deg;
+    transform: scale(1.15) rotate(var(--base-rotate)) translate3d(15px, -20px, 0);
+    opacity: 0.3;
+}
+
+/* 5. Footer Accents (Floating slowly) */
+footer::before, footer::after {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background-image: url('assets/images/3d_flowers.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.1));
+    opacity: 0.4;
+    pointer-events: none;
+    animation: luxuryAmbientFloat 25s linear infinite;
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+footer::before {
+    top: -200px;
+    left: -200px;
+    --base-rotate: 45deg;
+    animation-delay: -5s;
+}
+
+footer::after {
+    bottom: -150px;
+    right: -150px;
+    --base-rotate: -60deg;
+    animation-delay: -15s;
+}
+
+/* 6. Contact Form Accent */
+.contact-form::before {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    right: -100px;
+    width: 350px;
+    height: 350px;
+    background-image: url('assets/images/3d_flowers.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+    opacity: 0.4;
+    pointer-events: none;
+    --base-rotate: -15deg;
+    animation: luxuryAmbientFloat 18s ease-in-out infinite reverse;
+    will-change: transform;
+    backface-visibility: hidden;
+}

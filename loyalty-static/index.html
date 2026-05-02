@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar-TN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>The Loft | Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=Inter:wght@400;500;600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .login-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .title-loft {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            color: #C1A35F;
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+        .subtitle-loft {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: #333;
+            line-height: 1.2;
+            margin-bottom: 40px;
+        }
+        .label-field {
+            display: block;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: #888;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .input-field {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 30px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .input-field:focus {
+            border-color: #C1A35F;
+        }
+        .btn-submit {
+            background-color: #2D2D2D;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+        .btn-submit:hover {
+            background-color: #1a1a1a;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #888;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: #eee;
+        }
+        .btn-google {
+            background: white;
+            border: 1px solid #e0e0e0;
+            width: 100%;
+            padding: 14px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-google span {
+            color: #C1A35F;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .btn-google:hover {
+            background-color: #fdfdfd;
+            border-color: #C1A35F;
+        }
+        #msg {
+            margin-top: 15px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h1 class="title-loft">The Loft</h1>
+        <h2 class="subtitle-loft">Marhba bikom fi The Loft</h2>
+
+        <div>
+            <label class="label-field">EMAIL ADDRESS</label>
+            <input type="email" id="email" class="input-field" placeholder="name@example.com">
+            
+            <button onclick="handleMagicLink()" id="magicBtn" class="btn-submit">
+                SEJEL EL DOUKHOUL <span style="font-size: 18px;">→</span>
+            </button>
+        </div>
+
+        <div class="divider">OR CONTINUE WITH</div>
+
+        <button onclick="loginWithGoogle()" class="btn-google">
+            <img src="https://www.google.com/favicon.ico" class="w-5 h-5" alt="google">
+            <span>GOOGLE</span>
+        </button>
+
+        <div id="msg"></div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        async function handleMagicLink() {
+            const email = document.getElementById('email').value;
+            const btn = document.getElementById('magicBtn');
+            const msg = document.getElementById('msg');
+            
+            if (!email) return;
+            
+            btn.disabled = true;
+            btn.innerText = 'Yab3ath...';
+            
+            const { error } = await loginWithMagicLink(email);
+            
+            if (error) {
+                msg.innerHTML = `<p class="text-red-500">${error.message}</p>`;
+            } else {
+                msg.innerHTML = `<p class="text-green-600">✅ Check el email mte3ek!</p>`;
+            }
+            btn.disabled = false;
+            btn.innerHTML = 'SEJEL EL DOUKHOUL <span style="font-size: 18px;">→</span>';
+        }
+
+        window.addEventListener('load', initApp);
+    </script>
+</body>
+</html>
