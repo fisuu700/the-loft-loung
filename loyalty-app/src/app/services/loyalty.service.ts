@@ -156,21 +156,36 @@ export class LoyaltyService {
 
   async loadLeaderboard() {
     try {
-      // Try using the RPC function first
       const { data, error } = await this.supabaseService.client
-        .rpc('get_monthly_leaderboard');
+        .from('profiles')
+        .select('username, total_points, avatar_url, id')
+        .order('total_points', { ascending: false })
+        .limit(10);
 
       if (!error && data) {
-        this._leaderboard.set(data);
-      } else {
-        // Fallback: manual query
-        await this.loadLeaderboardFallback();
+        const entries: LeaderboardEntry[] = data.map(p => ({
+          username: p.username || 'Loft Member',
+          points_count: p.total_points || 0,
+          avatar_url: p.avatar_url,
+          user_id: p.id
+        }));
+        this._leaderboard.set(entries);
+        
+        // Calculate user rank in this global list
+        const user = this.authService.user();
+        if (user) {
+          const rank = entries.findIndex(e => e.user_id === user.id);
+          if (rank >= 0) {
+            this._userRank.set(rank + 1);
+          } else {
+            // If not in top 10, we might need a separate query for rank, 
+            // but for now let's just keep it as is or do a count
+            this.calculateUserRank(); 
+          }
+        }
       }
-
-      // Calculate user rank
-      await this.calculateUserRank();
-    } catch {
-      await this.loadLeaderboardFallback();
+    } catch (error) {
+      console.error('Leaderboard error:', error);
     }
   }
 

@@ -51,24 +51,23 @@ import { LucideAngularModule } from 'lucide-angular';
 
       <!-- Top Members List -->
       <div class="space-y-6">
-        <h3 class="text-2xl font-bold text-loft-dark px-2" style="font-family: var(--font-playfair);">Top 5 Members</h3>
+        <h3 class="text-2xl font-bold text-loft-dark px-2" style="font-family: var(--font-playfair);">Top 10 Members</h3>
         
         <div class="card-light !p-0 overflow-hidden">
           <div class="divide-y divide-black/5">
-            @for (entry of leaderboard(); track entry.username; let i = $index) {
+            @for (entry of leaderboard(); track entry.user_id; let i = $index) {
               <div class="flex items-center gap-4 p-4 transition-colors hover:bg-black/[0.01]">
                 <div class="w-8 text-center font-bold text-xl" [class.text-gold]="i === 0" [class.text-loft-gray-muted]="i > 0">
-                  {{ i + 1 }}
+                   @if (i === 0) { 👑 } @else { {{ i + 1 }} }
                 </div>
                 
-                <div class="w-12 h-12 rounded-xl overflow-hidden border border-black/5">
-                  @if (entry.avatar_url) {
-                    <img [src]="entry.avatar_url" alt="avatar" class="w-full h-full object-cover">
-                  } @else {
-                    <div class="w-full h-full bg-loft-gray-light flex items-center justify-center text-sm font-bold text-loft-gray-muted">
-                      {{ entry.username[0] | uppercase }}
-                    </div>
+                <div class="w-12 h-12 rounded-xl overflow-hidden border border-black/5 bg-loft-gray-light flex items-center justify-center">
+                  @if (entry.avatar_url && !entry.avatar_url.includes('placeholder')) {
+                    <img [src]="entry.avatar_url" alt="avatar" class="w-full h-full object-cover" onerror="this.style.display='none'">
                   }
+                  <div class="text-sm font-bold text-loft-gray-muted uppercase">
+                    {{ entry.username[0] }}
+                  </div>
                 </div>
 
                 <div class="flex-1">
