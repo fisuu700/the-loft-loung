@@ -136,6 +136,23 @@ export class AuthService {
     }
   }
 
+  async updateUsername(newUsername: string) {
+    const user = this._user();
+    if (!user) return;
+
+    const { error } = await this.supabaseService.client
+      .from('profiles')
+      .update({ username: newUsername })
+      .eq('id', user.id);
+
+    if (error) {
+      alert("Mochkel f el update: " + error.message);
+      throw error;
+    }
+
+    await this.loadProfile(user.id);
+  }
+
   async loadProfile(userId: string) {
     const { data, error } = await this.supabaseService.client
       .from('profiles')

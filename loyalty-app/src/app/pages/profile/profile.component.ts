@@ -37,8 +37,13 @@ import { AuthService } from '../../services/auth.service';
             </div>
           </div>
 
-          <h2 class="text-2xl font-bold">{{ profile()?.username }}</h2>
-          <p class="text-loft-text-muted text-sm">{{ authUser()?.email }}</p>
+          <div class="flex items-center gap-3">
+            <h2 class="text-2xl font-bold">{{ profile()?.username }}</h2>
+            <button (click)="editName()" class="p-1.5 rounded-lg bg-loft-gold/10 text-loft-gold hover:bg-loft-gold/20 transition-colors">
+              <span class="text-xs">✏️</span>
+            </button>
+          </div>
+          <p class="text-loft-text-muted text-sm mt-1">{{ authUser()?.email }}</p>
           
           <div class="mt-6 flex gap-2">
             <span class="px-4 py-1 rounded-full bg-loft-gold/10 text-loft-gold text-xs font-bold border border-loft-gold/20 uppercase tracking-widest">
@@ -94,6 +99,20 @@ export class ProfileComponent {
   authUser = this.authService.user;
 
   constructor() {}
+
+  async editName() {
+    const currentName = this.profile()?.username || '';
+    const newName = prompt("Badel esmek:", currentName);
+    
+    if (newName && newName !== currentName) {
+      try {
+        await this.authService.updateUsername(newName);
+        alert("Esmek t-badel mrigel!");
+      } catch (e) {
+        // Error handled in service
+      }
+    }
+  }
 
   async logout() {
     await this.authService.signOut();
