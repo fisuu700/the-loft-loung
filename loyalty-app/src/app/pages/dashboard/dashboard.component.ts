@@ -78,7 +78,7 @@ import {
               <lucide-icon [name]="StarIcon" class="text-gold animate-pulse-gold" [size]="24"></lucide-icon>
               Top 5 Exclusive Rewards
             </h3>
-            @if (userRank() <= 5) {
+            @if (userRank() && userRank()! <= 5) {
               <span class="px-3 py-1 bg-green-500/10 text-green-600 text-[10px] font-bold uppercase tracking-widest rounded-full border border-green-500/20">
                 You're Eligible!
               </span>
@@ -92,7 +92,7 @@ import {
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Reward 1 -->
             <div class="card-light group hover:border-gold transition-all duration-500 cursor-pointer relative overflow-hidden" 
-                 [class.opacity-50]="userRank() > 5">
+                 [class.opacity-50]="(userRank() || 99) > 5">
               <div class="absolute -right-4 -top-4 w-16 h-16 bg-gold/10 rounded-full blur-2xl group-hover:bg-gold/20 transition-all"></div>
               <div class="relative space-y-4">
                 <div class="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform">
@@ -110,14 +110,14 @@ import {
 
             <!-- Reward 2 -->
             <div class="card-light group hover:border-gold transition-all duration-500 cursor-pointer relative overflow-hidden"
-                 [class.opacity-50]="userRank() > 5">
+                 [class.opacity-50]="(userRank() || 99) > 5">
               <div class="relative space-y-4">
                 <div class="w-12 h-12 rounded-2xl bg-loft-gray-light flex items-center justify-center text-loft-dark group-hover:scale-110 transition-transform">
                   <lucide-icon [name]="IceCreamIcon" [size]="24"></lucide-icon>
                 </div>
                 <div>
-                  <h4 class="font-bold text-loft-dark">Fresh & Bites</h4>
-                  <p class="text-xs text-loft-gray-muted leading-tight">2 Mokhito + Pancake or Boule Bourgeois</p>
+                  <h4 class="font-bold text-loft-dark">Summer Vibes</h4>
+                  <p class="text-xs text-loft-gray-muted leading-tight">2 Mokhito + Painckake ou Boule Bourgeois au choix</p>
                 </div>
                 <div class="pt-2 border-t border-black/5 text-gold flex items-center gap-2">
                   <span class="text-[9px] font-extrabold uppercase tracking-widest">Summer Special</span>
@@ -127,7 +127,7 @@ import {
 
             <!-- Reward 3 -->
             <div class="card-light group hover:border-gold transition-all duration-500 cursor-pointer relative overflow-hidden"
-                 [class.opacity-50]="userRank() > 5">
+                 [class.opacity-50]="(userRank() || 99) > 5">
               <div class="relative space-y-4">
                 <div class="w-12 h-12 rounded-2xl bg-loft-gray-light flex items-center justify-center text-loft-dark group-hover:scale-110 transition-transform">
                   <lucide-icon [name]="GiftIcon" [size]="24"></lucide-icon>
