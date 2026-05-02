@@ -135,6 +135,34 @@ window.logout = logout;
 window.initApp = initApp;
 
 // ===== Loyalty Functions =====
+const MAX_MONTHLY_POINTS = 150;
+const MAX_USERS_LIMIT = 5;
+
+let systemClosed = false;
+let userMonthlyPoints = 0;
+
+async function syncSystemStatus() {
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0,0,0,0);
+    
+    const { data, error } = await supabaseClient
+        .from('check_ins')
+        .select('user_id')
+        .gte('created_at', startOfMonth.toISOString());
+        
+    if (error) return;
+
+    const grouped = data.reduce((acc, item) => {
+        acc[item.user_id] = (acc[item.user_id] || 0) + 1;
+        return acc;
+    }, {});
+
+    const usersAtLimit = Object.values(grouped).filter(count => count * 10 >= MAX_MONTHLY_POINTS).length;
+    systemClosed = usersAtLimit >= MAX_USERS_LIMIT;
+    userMonthlyPoints = (grouped[currentUser.id] || 0) * 10;
+}
+
 async function checkTodayStatus() {
     const today = new Date();
     const startOfDay = new Date(today.setHours(0,0,0,0)).toISOString();
@@ -149,37 +177,54 @@ async function checkTodayStatus() {
 }
 
 async function performCheckIn() {
+    await syncSystemStatus();
+
+    if (systemClosed) {
+        return { success: false, message: "Désolé! El Loft Lounge skira l chhar htha. Nchoufouk chhar jey!" };
+    }
+
+    if (userMonthlyPoints >= MAX_MONTHLY_POINTS) {
+        return { success: false, message: "Ya3tik el sa7a! Kammalt el 150 point mte3ek. Nchoufouk chhar jey!" };
+    }
+
     const alreadyDone = await checkTodayStatus();
     if (alreadyDone) return { success: false, message: "Tbarkallah 3lik, nchoufouk ghodwa!" };
 
     const { error: checkError } = await supabaseClient.from('check_ins').insert({ user_id: currentUser.id });
     if (checkError) throw checkError;
 
-    const { error: updateError } = await supabaseClient.from('profiles')
-        .update({ total_points: (currentProfile.total_points || 0) + 10 })
-        .eq('id', currentUser.id);
-        
-    if (updateError) throw updateError;
-    
     await loadProfile();
+    await syncSystemStatus();
     return { success: true };
 }
 
 async function getLeaderboard() {
-    const { data, error } = await supabaseClient.rpc('get_monthly_leaderboard');
-    if (error) {
-        // Fallback manual query
-        const startOfMonth = new Date();
-        startOfMonth.setDate(1);
-        startOfMonth.setHours(0,0,0,0);
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0,0,0,0);
 
-        const { data: checkins } = await supabaseClient
-            .from('check_ins')
-            .select('user_id, profiles(username, avatar_url)')
-            .gte('created_at', startOfMonth.toISOString());
-            
-        // Group and count logic... (simplified for now)
-        return []; 
-    }
-    return data;
+    const { data: checkins, error } = await supabaseClient
+        .from('check_ins')
+        .select('user_id, profiles(username, avatar_url)')
+        .gte('created_at', startOfMonth.toISOString());
+        
+    if (error) return [];
+
+    const grouped = checkins.reduce((acc, item) => {
+        const uid = item.user_id;
+        if (!acc[uid]) {
+            acc[uid] = {
+                username: item.profiles?.username || 'Unknown',
+                avatar_url: item.profiles?.avatar_url,
+                user_id: uid,
+                points_count: 0
+            };
+        }
+        acc[uid].points_count += 10;
+        return acc;
+    }, {});
+
+    return Object.values(grouped)
+        .sort((a, b) => b.points_count - a.points_count)
+        .slice(0, 5);
 }

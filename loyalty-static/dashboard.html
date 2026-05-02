@@ -90,8 +90,11 @@
         async function updateUI() {
             if (!currentProfile) return;
 
+            // Sync monthly status first
+            await syncSystemStatus();
+
             document.getElementById('username').innerText = currentProfile.username;
-            document.getElementById('totalPoints').innerText = currentProfile.total_points;
+            document.getElementById('totalPoints').innerText = userMonthlyPoints;
             
             if (currentProfile.avatar_url) {
                 document.getElementById('avatarContainer').innerHTML = `<img src="${currentProfile.avatar_url}" class="w-full h-full object-cover">`;
@@ -99,22 +102,45 @@
                 document.getElementById('avatarContainer').innerText = currentProfile.username[0].toUpperCase();
             }
 
-            const pts = currentProfile.total_points || 0;
-            const progress = Math.min((pts % 100), 100);
+            const pts = userMonthlyPoints;
+            const progress = Math.min((pts / 150) * 100, 100);
             document.getElementById('progressBar').style.width = progress + '%';
-            document.getElementById('progressPercent').innerText = progress + '%';
+            document.getElementById('progressPercent').innerText = Math.round(progress) + '%';
             
-            const remaining = 100 - (pts % 100);
-            document.getElementById('remainingMsg').innerText = `${remaining} n9at ba9yin lel 9ahwa 🎉`;
+            const remaining = 150 - pts;
+            document.getElementById('remainingMsg').innerText = `${remaining} n9at ba9yin l chhar hedha 🎯`;
 
-            const done = await checkTodayStatus();
-            if (done) {
-                document.getElementById('actionArea').innerHTML = `
-                    <div class="w-full py-5 px-6 rounded-lg text-center border border-[#eee] bg-white">
-                        <p class="text-gold font-bold text-sm">✨ Tbarkallah 3lik!</p>
-                        <p class="text-[#888] text-[11px] mt-1 italic uppercase font-bold">Nchoufouk ghodwa inchallah!</p>
+            const area = document.getElementById('actionArea');
+            if (systemClosed) {
+                area.innerHTML = `
+                    <div class="w-full py-5 px-6 rounded-lg text-center border border-red-100 bg-red-50">
+                        <p class="text-red-600 font-bold text-sm">🚫 Systeme Skira!</p>
+                        <p class="text-red-500 text-[10px] mt-1 italic uppercase font-bold">5 w7od lammou 150 pts. Nchoufoukom chhar jey!</p>
                     </div>
                 `;
+            } else if (userMonthlyPoints >= 150) {
+                area.innerHTML = `
+                    <div class="w-full py-5 px-6 rounded-lg text-center border border-gold/20 bg-gold/5">
+                        <p class="text-gold font-bold text-sm">⭐ Bravo!</p>
+                        <p class="text-gold/70 text-[10px] mt-1 italic uppercase font-bold">Kammalt el 150 pts mte3ek!</p>
+                    </div>
+                `;
+            } else {
+                const done = await checkTodayStatus();
+                if (done) {
+                    area.innerHTML = `
+                        <div class="w-full py-5 px-6 rounded-lg text-center border border-[#eee] bg-white">
+                            <p class="text-gold font-bold text-sm">✨ Tbarkallah 3lik!</p>
+                            <p class="text-[#888] text-[11px] mt-1 italic uppercase font-bold">Nchoufouk ghodwa inchallah!</p>
+                        </div>
+                    `;
+                } else {
+                    area.innerHTML = `
+                        <button onclick="handleCheckIn()" id="checkBtn" class="btn-dark w-full py-5">
+                            Marque Présence <span style="font-size: 18px;">→</span>
+                        </button>
+                    `;
+                }
             }
 
             const list = document.getElementById('milestonesList');

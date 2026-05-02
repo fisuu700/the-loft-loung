@@ -15,6 +15,9 @@ export interface LeaderboardEntry {
   user_id?: string;
 }
 
+const MAX_MONTHLY_POINTS = 150;
+const MAX_USERS_LIMIT = 5;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,6 +27,8 @@ export class LoyaltyService {
   private _leaderboard = signal<LeaderboardEntry[]>([]);
   private _userRank = signal<number | null>(null);
   private _monthlyPoints = signal(0);
+  private _systemClosed = signal(false);
+  private _usersAtLimitCount = signal(0);
   private _loading = signal(false);
   private _recentCheckIns = signal<any[]>([]);
 
@@ -32,6 +37,8 @@ export class LoyaltyService {
   readonly leaderboard = this._leaderboard.asReadonly();
   readonly userRank = this._userRank.asReadonly();
   readonly monthlyPoints = this._monthlyPoints.asReadonly();
+  readonly systemClosed = this._systemClosed.asReadonly();
+  readonly usersAtLimitCount = this._usersAtLimitCount.asReadonly();
   readonly loading = this._loading.asReadonly();
   readonly recentCheckIns = this._recentCheckIns.asReadonly();
 
@@ -65,6 +72,19 @@ export class LoyaltyService {
     this._loading.set(true);
 
     try {
+      // 0. Sync system status and check rules
+      await this.syncSystemStatus();
+
+      if (this._systemClosed()) {
+        alert("Désolé! El Loft Lounge skira l chhar htha (5 users hit 150 pts). Nchoufouk chhar jey!");
+        return false;
+      }
+
+      if (this._monthlyPoints() >= MAX_MONTHLY_POINTS) {
+        alert("Ya3tik el sa7a! Kammalt el 150 point mte3ek l chhar htha. Nchoufouk chhar jey!");
+        return false;
+      }
+
       // 1. Double-check today's status
       await this.checkTodayStatus();
       if (this._todayCheckedIn()) {
@@ -78,27 +98,9 @@ export class LoyaltyService {
 
       if (checkInError) throw checkInError;
 
-      // 3. Count ALL check-ins to get the REAL points
-      const { count, error: countError } = await this.supabaseService.client
-        .from('check_ins')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
-
-      if (countError) throw countError;
-
-      const realPoints = (count || 0) * 10;
-
-      // 4. Try to sync this with the profiles table (upsert)
-      await this.supabaseService.client
-        .from('profiles')
-        .upsert({ 
-          id: user.id, 
-          total_points: realPoints,
-          updated_at: new Date().toISOString()
-        });
-
-      // 5. Refresh everything
+      // 3. Refresh everything
       this._todayCheckedIn.set(true);
+      await this.syncSystemStatus(); // Refresh points after check-in
       await this.authService.loadProfile(user.id);
       await this.calculateStreak();
       await this.loadLeaderboard();
@@ -110,6 +112,43 @@ export class LoyaltyService {
       return false;
     } finally {
       this._loading.set(false);
+    }
+  }
+
+  async syncSystemStatus() {
+    const user = this.authService.user();
+    
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const { data, error } = await this.supabaseService.client
+      .from('check_ins')
+      .select('user_id')
+      .gte('created_at', startOfMonth.toISOString());
+
+    if (error) {
+      console.error('Error syncing system status:', error);
+      return;
+    }
+
+    if (data) {
+      // Group by user_id
+      const grouped = data.reduce((acc: Record<string, number>, item: any) => {
+        acc[item.user_id] = (acc[item.user_id] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Count how many users reached 150 points (15 check-ins)
+      const usersAtLimit = Object.values(grouped).filter(count => count * 10 >= MAX_MONTHLY_POINTS).length;
+      
+      this._usersAtLimitCount.set(usersAtLimit);
+      this._systemClosed.set(usersAtLimit >= MAX_USERS_LIMIT);
+
+      // Update current user points
+      if (user) {
+        this._monthlyPoints.set((grouped[user.id] || 0) * 10);
+      }
     }
   }
 
@@ -156,32 +195,47 @@ export class LoyaltyService {
 
   async loadLeaderboard() {
     try {
-      const { data, error } = await this.supabaseService.client
-        .from('profiles')
-        .select('username, total_points, avatar_url, id')
-        .order('total_points', { ascending: false })
-        .limit(10);
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
 
-      if (!error && data) {
-        const entries: LeaderboardEntry[] = data.map(p => ({
-          username: p.username || 'Loft Member',
-          points_count: p.total_points || 0,
-          avatar_url: p.avatar_url,
-          user_id: p.id
-        }));
-        this._leaderboard.set(entries);
+      const { data, error } = await this.supabaseService.client
+        .from('check_ins')
+        .select('user_id, profiles(username, avatar_url)')
+        .gte('created_at', startOfMonth.toISOString());
+
+      if (error) throw error;
+
+      if (data) {
+        const grouped = data.reduce((acc: Record<string, any>, item: any) => {
+          const uid = item.user_id;
+          if (!acc[uid]) {
+            acc[uid] = {
+              username: item.profiles?.username || 'Loft Member',
+              avatar_url: item.profiles?.avatar_url,
+              user_id: uid,
+              points_count: 0
+            };
+          }
+          acc[uid].points_count += 10;
+          return acc;
+        }, {});
+
+        const sorted = Object.values(grouped)
+          .sort((a: any, b: any) => b.points_count - a.points_count)
+          .slice(0, 5);
+
+        this._leaderboard.set(sorted as LeaderboardEntry[]);
         
-        // Calculate user rank in this global list
+        // Calculate user rank from this monthly list
         const user = this.authService.user();
         if (user) {
-          const rank = entries.findIndex(e => e.user_id === user.id);
-          if (rank >= 0) {
-            this._userRank.set(rank + 1);
-          } else {
-            // If not in top 10, we might need a separate query for rank, 
-            // but for now let's just keep it as is or do a count
-            this.calculateUserRank(); 
-          }
+          const allSorted = Object.entries(grouped)
+            .sort(([, a]: any, [, b]: any) => b.points_count - a.points_count);
+          
+          const rank = allSorted.findIndex(([uid]) => uid === user.id);
+          this._userRank.set(rank >= 0 ? rank + 1 : null);
+          this._monthlyPoints.set((grouped[user.id]?.points_count || 0));
         }
       }
     } catch (error) {
@@ -189,69 +243,9 @@ export class LoyaltyService {
     }
   }
 
-  private async loadLeaderboardFallback() {
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setHours(0, 0, 0, 0);
-
-    const { data } = await this.supabaseService.client
-      .from('check_ins')
-      .select('user_id, profiles(username, avatar_url)')
-      .gte('created_at', startOfMonth.toISOString());
-
-    if (data) {
-      const grouped = data.reduce((acc: Record<string, any>, item: any) => {
-        const uid = item.user_id;
-        if (!acc[uid]) {
-          acc[uid] = {
-            username: item.profiles?.username || 'Unknown',
-            avatar_url: item.profiles?.avatar_url,
-            user_id: uid,
-            points_count: 0
-          };
-        }
-        acc[uid].points_count++;
-        return acc;
-      }, {});
-
-      const sorted = Object.values(grouped)
-        .map((entry: any) => ({
-          ...entry,
-          points_count: entry.points_count * 10 // Multiply by 10 to match dashboard points
-        }))
-        .sort((a: any, b: any) => b.points_count - a.points_count)
-        .slice(0, 5);
-
-      this._leaderboard.set(sorted as LeaderboardEntry[]);
-    }
-  }
-
   private async calculateUserRank() {
-    const user = this.authService.user();
-    if (!user) return;
-
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setHours(0, 0, 0, 0);
-
-    const { data } = await this.supabaseService.client
-      .from('check_ins')
-      .select('user_id')
-      .gte('created_at', startOfMonth.toISOString());
-
-    if (data) {
-      const grouped = data.reduce((acc: Record<string, number>, item: any) => {
-        acc[item.user_id] = (acc[item.user_id] || 0) + 1;
-        return acc;
-      }, {});
-
-      const sorted = Object.entries(grouped)
-        .sort(([, a], [, b]) => b - a);
-
-      const rank = sorted.findIndex(([uid]) => uid === user.id);
-      this._userRank.set(rank >= 0 ? rank + 1 : null);
-      this._monthlyPoints.set((grouped[user.id] || 0) * 10); // Multiply by 10
-    }
+    // Rank is now calculated in loadLeaderboard()
+    await this.loadLeaderboard();
   }
 
   async loadRecentCheckIns() {
@@ -268,24 +262,15 @@ export class LoyaltyService {
 
   async addPointsManually(userId: string, points: number = 10) {
     // Create a check-in for the user
+    // In this system, 1 check-in = 10 points
     const { error: checkInError } = await this.supabaseService.client
       .from('check_ins')
       .insert({ user_id: userId });
 
     if (checkInError) throw checkInError;
 
-    // Get current points
-    const { data: profile } = await this.supabaseService.client
-      .from('profiles')
-      .select('total_points')
-      .eq('id', userId)
-      .single();
-
-    if (profile) {
-      await this.supabaseService.client
-        .from('profiles')
-        .update({ total_points: (profile.total_points || 0) + points })
-        .eq('id', userId);
-    }
+    // Refresh system status to reflect new points
+    await this.syncSystemStatus();
+    await this.loadLeaderboard();
   }
 }

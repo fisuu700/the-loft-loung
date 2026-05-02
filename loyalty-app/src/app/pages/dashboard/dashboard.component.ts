@@ -36,7 +36,23 @@ import {
 
       <!-- Action Section -->
       <div class="space-y-4">
-        @if (!todayCheckedIn()) {
+        @if (systemClosed()) {
+          <div class="w-full bg-red-50 border border-red-100 rounded-2xl py-6 px-4 text-center animate-pulse">
+            <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-red-200">
+              <lucide-icon [name]="BellIcon" [size]="24" class="text-white"></lucide-icon>
+            </div>
+            <h3 class="text-red-800 font-bold uppercase tracking-widest text-sm">Systeme Skira!</h3>
+            <p class="text-red-600/70 text-[10px] font-medium mt-1">5 w7od lammou 150 pts. Nchoufoukom chhar jey!</p>
+          </div>
+        } @else if (monthlyPoints() >= 150) {
+          <div class="w-full bg-gold/10 border border-gold/20 rounded-2xl py-6 px-4 text-center">
+            <div class="w-12 h-12 bg-gold rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-gold/20">
+              <lucide-icon [name]="StarIcon" [size]="24" class="text-white"></lucide-icon>
+            </div>
+            <h3 class="text-gold font-bold uppercase tracking-widest text-sm">Bravo!</h3>
+            <p class="text-gold/70 text-[10px] font-medium mt-1">Lammte 150 points. Sakert el chhar mte3ek!</p>
+          </div>
+        } @else if (!todayCheckedIn()) {
           <button 
             (click)="performCheckInWithLocation()"
             [disabled]="isChecking()"
@@ -153,8 +169,13 @@ import {
           <div class="space-y-1">
             <div class="flex flex-col">
               <span class="text-[10px] font-bold text-loft-gray-muted uppercase tracking-widest">Rank #{{ userRank() || '--' }}</span>
-              <p class="text-5xl font-bold text-gold tracking-tighter">{{ profile()?.total_points || 0 }}</p>
-              <span class="text-[9px] font-bold text-loft-gray-muted uppercase tracking-widest">Total Points</span>
+              <p class="text-5xl font-bold text-gold tracking-tighter">{{ monthlyPoints() }}</p>
+              <div class="flex items-center gap-1">
+                <span class="text-[9px] font-bold text-loft-gray-muted uppercase tracking-widest">Points / 150</span>
+                @if (systemClosed()) {
+                  <span class="text-[8px] px-1 bg-red-500 text-white font-bold rounded">CLOSED</span>
+                }
+              </div>
             </div>
           </div>
           
@@ -202,6 +223,8 @@ export class DashboardComponent implements OnInit {
   todayCheckedIn = this.loyaltyService.todayCheckedIn;
   streak = this.loyaltyService.streak;
   monthlyPoints = this.loyaltyService.monthlyPoints;
+  systemClosed = this.loyaltyService.systemClosed;
+  usersAtLimitCount = this.loyaltyService.usersAtLimitCount;
   userRank = this.loyaltyService.userRank;
 
   isChecking = signal(false);
@@ -239,6 +262,7 @@ export class DashboardComponent implements OnInit {
 
   async ngOnInit() {
     await Promise.all([
+      this.loyaltyService.syncSystemStatus(),
       this.loyaltyService.checkTodayStatus(),
       this.loyaltyService.calculateStreak(),
       this.loyaltyService.loadLeaderboard()

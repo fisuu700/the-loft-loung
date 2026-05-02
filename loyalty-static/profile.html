@@ -40,6 +40,17 @@
         <div class="relative z-10 space-y-4 animate-slide-up" style="animation-delay: 0.1s;">
             <div class="card-premium flex items-center justify-between p-4">
                 <div class="flex items-center gap-4">
+                    <span class="text-xl">🏆</span>
+                    <div>
+                        <p class="font-semibold">N9at el chhar</p>
+                        <p class="text-xs text-[#888888]">Monthly Competition (Max 150)</p>
+                    </div>
+                </div>
+                <span id="monthlyPointsValue" class="text-xl font-bold text-[#D4AF37]">0</span>
+            </div>
+
+            <div class="card-premium flex items-center justify-between p-4">
+                <div class="flex items-center gap-4">
                     <span class="text-xl">📊</span>
                     <div>
                         <p class="font-semibold">Total Points</p>
@@ -83,9 +94,12 @@
     <script>
         async function updateUI() {
             if (!currentProfile) return;
+            await syncSystemStatus();
+
             document.getElementById('profileName').innerText = currentProfile.username;
             document.getElementById('profileEmail').innerText = currentUser.email;
-            document.getElementById('pointsValue').innerText = currentProfile.total_points;
+            document.getElementById('pointsValue').innerText = currentProfile.total_points || 0;
+            document.getElementById('monthlyPointsValue').innerText = userMonthlyPoints;
             document.getElementById('profileRole').innerText = currentProfile.role || 'Member';
 
             if (currentProfile.avatar_url) {

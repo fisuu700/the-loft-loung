@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { LoyaltyService } from '../../services/loyalty.service';
 
 @Component({
   selector: 'app-profile',
@@ -57,6 +58,17 @@ import { AuthService } from '../../services/auth.service';
       <div class="relative z-10 space-y-4 animate-slide-up" style="animation-delay: 0.1s;">
         <div class="card-premium flex items-center justify-between py-4">
           <div class="flex items-center gap-4">
+            <span class="text-xl">🏆</span>
+            <div>
+              <p class="font-semibold">N9at el chhar</p>
+              <p class="text-xs text-loft-text-muted">Current Month Points (Max 150)</p>
+            </div>
+          </div>
+          <span class="text-xl font-bold text-loft-gold">{{ monthlyPoints() }}</span>
+        </div>
+
+        <div class="card-premium flex items-center justify-between py-4">
+          <div class="flex items-center gap-4">
             <span class="text-xl">📊</span>
             <div>
               <p class="font-semibold">Total Points</p>
@@ -95,8 +107,10 @@ import { AuthService } from '../../services/auth.service';
 })
 export class ProfileComponent {
   private authService = inject(AuthService);
+  private loyaltyService = inject(LoyaltyService);
   profile = this.authService.profile;
   authUser = this.authService.user;
+  monthlyPoints = this.loyaltyService.monthlyPoints;
 
   constructor() {}
 
