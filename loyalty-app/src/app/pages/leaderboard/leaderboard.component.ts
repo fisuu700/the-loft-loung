@@ -9,10 +9,11 @@ import { LucideAngularModule } from 'lucide-angular';
   standalone: true,
   imports: [CommonModule, LucideAngularModule],
   template: `
-    <div class="px-6 py-4 md:py-10 space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-10 animate-fade-in">
-      
-      <!-- Leaderboard Header -->
-      <div class="text-center space-y-4 md:col-span-2">
+    <div class="animate-fade-in">
+      <div class="max-w-7xl mx-auto px-6 py-4 md:py-12 space-y-10 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-10">
+        
+        <!-- Leaderboard Header -->
+        <div class="text-center space-y-4 md:col-span-2 lg:col-span-3">
         <h2 class="text-5xl font-bold text-loft-dark leading-tight" style="font-family: var(--font-playfair);">
           Ranking mte3 <br>
           <span class="italic text-gold">el chhar</span>
@@ -95,7 +96,8 @@ import { LucideAngularModule } from 'lucide-angular';
         <p class="text-[10px] text-center text-loft-gray-muted font-bold uppercase tracking-widest leading-relaxed">
           Leaderboard updates monthly. <br>
           Keep visitng to climb the ranks!
-        </div>
+        </p>
+      </div>
     </div>
   `
 })

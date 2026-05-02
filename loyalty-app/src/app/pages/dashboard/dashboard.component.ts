@@ -15,10 +15,11 @@ import {
   standalone: true,
   imports: [CommonModule, LucideAngularModule],
   template: `
-    <div class="px-6 py-4 md:py-10 space-y-8 md:space-y-0 md:grid md:grid-cols-2 md:gap-10 animate-fade-in">
-      
-      <!-- Welcome Section (Full width on grid) -->
-      <div class="text-center space-y-3 md:col-span-2 md:mb-6">
+    <div class="animate-fade-in">
+      <div class="max-w-7xl mx-auto px-6 py-4 md:py-12 space-y-8 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-10">
+        
+        <!-- Welcome Section (Full width on grid) -->
+        <div class="text-center space-y-3 md:col-span-2 lg:col-span-3 md:mb-10">
         <h2 class="text-5xl font-bold text-loft-dark leading-tight" style="font-family: var(--font-playfair);">
           Marhba bik <br>
           <span class="italic text-gold">{{ profile()?.username?.split(' ')?.[0] || 'Member' }}</span>
@@ -124,6 +125,7 @@ import {
           </button>
         </div>
       }
+      </div>
     </div>
   `
 })

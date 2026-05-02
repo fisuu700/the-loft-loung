@@ -23,7 +23,7 @@ import {
     LucideAngularModule
   ],
   template: `
-    <div class="app-container w-full max-w-md md:max-w-4xl mx-auto bg-loft-marble min-h-screen shadow-2xl relative shadow-black/5 md:my-8 md:rounded-3xl overflow-hidden">
+    <div class="app-container w-full min-h-screen bg-loft-marble shadow-black/5 relative">
       
       <!-- Top Header (Sticky) -->
       @if (authService.isLoggedIn()) {
