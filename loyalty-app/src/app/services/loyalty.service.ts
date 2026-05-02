@@ -65,72 +65,48 @@ export class LoyaltyService {
     this._loading.set(true);
 
     try {
-      // Double-check today's status
+      // 1. Double-check today's status
       await this.checkTodayStatus();
       if (this._todayCheckedIn()) {
-        alert("Rak salla7t hdhorek lyoum deja!");
         return false;
       }
 
-      // Create check-in
+      // 2. Create check-in
       const { error: checkInError } = await this.supabaseService.client
         .from('check_ins')
         .insert({ user_id: user.id });
 
-      if (checkInError) {
-        alert("Erreur check-in: " + checkInError.message);
-        throw checkInError;
-      }
+      if (checkInError) throw checkInError;
 
-      // Get fresh points to avoid overwriting with stale local state
-      const { data: profileData, error: fetchError } = await this.supabaseService.client
+      // 3. Count ALL check-ins to get the REAL points
+      const { count, error: countError } = await this.supabaseService.client
+        .from('check_ins')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+
+      if (countError) throw countError;
+
+      const realPoints = (count || 0) * 10;
+
+      // 4. Try to sync this with the profiles table (upsert)
+      await this.supabaseService.client
         .from('profiles')
-        .select('total_points, id')
-        .eq('id', user.id)
-        .single();
+        .upsert({ 
+          id: user.id, 
+          total_points: realPoints,
+          updated_at: new Date().toISOString()
+        });
 
-      if (fetchError) {
-        alert("Erreur fetch profile: " + fetchError.message);
-        throw fetchError;
-      }
-
-      if (!profileData) {
-        alert("Profile mouch mawjoud l asel! ID: " + user.id);
-        return false;
-      }
-
-      const currentPoints = profileData.total_points || 0;
-      const newPoints = currentPoints + 10;
-      
-      alert("Points l9dom: " + currentPoints + " -> Jdod: " + newPoints);
-
-      // Add 10 points to profile
-      const { data: updateData, error: updateError } = await this.supabaseService.client
-        .from('profiles')
-        .update({ total_points: newPoints })
-        .eq('id', user.id)
-        .select();
-
-      if (updateError) {
-        alert("Erreur update points: " + updateError.message);
-        throw updateError;
-      }
-
-      if (!updateData || updateData.length === 0) {
-        alert("Update saret ama 7atta row matbadel! (0 rows affected)");
-      } else {
-        alert("Update mrigla! Jdid f DB: " + updateData[0].total_points);
-      }
-
-      // Refresh state
+      // 5. Refresh everything
       this._todayCheckedIn.set(true);
       await this.authService.loadProfile(user.id);
       await this.calculateStreak();
-      await this.loadLeaderboard(); // Refresh monthly points and rank
+      await this.loadLeaderboard();
 
       return true;
     } catch (error: any) {
       console.error('Check-in error:', error);
+      alert("Erreur: " + error.message);
       return false;
     } finally {
       this._loading.set(false);

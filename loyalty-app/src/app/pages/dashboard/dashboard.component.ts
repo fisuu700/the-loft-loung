@@ -31,6 +31,7 @@ import {
         <p class="text-sm text-loft-gray-muted font-medium max-w-[200px] mx-auto leading-relaxed">
           Welcome back to your sanctuary. Ready to log today's visit?
         </p>
+        <p class="text-[8px] text-loft-gray-muted/30 mt-2 uppercase tracking-widest text-center">v1.0.6 - Debug Points</p>
       </div>
 
       <!-- Action Section -->
