@@ -234,9 +234,9 @@ export class DashboardComponent implements OnInit {
   errorMessage = signal<string | null>(null);
 
   // Cafe Location (The Loft Lounge placeholder)
-  private readonly CAFE_LAT = 36.81897;
-  private readonly CAFE_LNG = 10.18166;
-  private readonly MAX_DISTANCE_METERS = 50;
+  private readonly CAFE_LAT = 35.033274;
+  private readonly CAFE_LNG = 9.474314;
+  private readonly MAX_DISTANCE_METERS = 200;
 
   private html5QrCode: any;
 
