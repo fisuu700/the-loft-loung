@@ -15,10 +15,10 @@ import {
   standalone: true,
   imports: [CommonModule, LucideAngularModule],
   template: `
-    <div class="px-6 py-4 space-y-8 animate-fade-in">
+    <div class="px-6 py-4 md:py-10 space-y-8 md:space-y-0 md:grid md:grid-cols-2 md:gap-10 animate-fade-in">
       
-      <!-- Welcome Section -->
-      <div class="text-center space-y-3">
+      <!-- Welcome Section (Full width on grid) -->
+      <div class="text-center space-y-3 md:col-span-2 md:mb-6">
         <h2 class="text-5xl font-bold text-loft-dark leading-tight" style="font-family: var(--font-playfair);">
           Marhba bik <br>
           <span class="italic text-gold">{{ profile()?.username?.split(' ')?.[0] || 'Member' }}</span>

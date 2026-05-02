@@ -9,10 +9,10 @@ import { LucideAngularModule } from 'lucide-angular';
   standalone: true,
   imports: [CommonModule, LucideAngularModule],
   template: `
-    <div class="px-6 py-4 space-y-10 animate-fade-in">
+    <div class="px-6 py-4 md:py-10 space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-10 animate-fade-in">
       
       <!-- Leaderboard Header -->
-      <div class="text-center space-y-4">
+      <div class="text-center space-y-4 md:col-span-2">
         <h2 class="text-5xl font-bold text-loft-dark leading-tight" style="font-family: var(--font-playfair);">
           Ranking mte3 <br>
           <span class="italic text-gold">el chhar</span>
