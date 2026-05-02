@@ -7,7 +7,11 @@ import {
   UserCheck, 
   Flame, 
   Check,
-  Bell
+  Bell,
+  Gift,
+  Utensils,
+  IceCream,
+  Star
 } from 'lucide-angular';
 
 @Component({
@@ -66,6 +70,79 @@ import {
           <p class="text-xs text-loft-gray-muted font-bold tracking-widest uppercase opacity-40">The Loft Lounge Interior</p>
         </div>
       </div>
+
+        <!-- Top 5 Rewards Section -->
+        <div class="md:col-span-2 lg:col-span-4 space-y-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-2xl font-bold text-loft-dark flex items-center gap-3" style="font-family: var(--font-playfair);">
+              <lucide-icon [name]="StarIcon" class="text-gold animate-pulse-gold" [size]="24"></lucide-icon>
+              Top 5 Exclusive Rewards
+            </h3>
+            @if (userRank() <= 5) {
+              <span class="px-3 py-1 bg-green-500/10 text-green-600 text-[10px] font-bold uppercase tracking-widest rounded-full border border-green-500/20">
+                You're Eligible!
+              </span>
+            } @else {
+              <span class="px-3 py-1 bg-loft-gray-light text-loft-gray-muted text-[10px] font-bold uppercase tracking-widest rounded-full">
+                Rank {{ userRank() || '?' }} / 5 to unlock
+              </span>
+            }
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Reward 1 -->
+            <div class="card-light group hover:border-gold transition-all duration-500 cursor-pointer relative overflow-hidden" 
+                 [class.opacity-50]="userRank() > 5">
+              <div class="absolute -right-4 -top-4 w-16 h-16 bg-gold/10 rounded-full blur-2xl group-hover:bg-gold/20 transition-all"></div>
+              <div class="relative space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform">
+                  <lucide-icon [name]="UtensilsIcon" [size]="24"></lucide-icon>
+                </div>
+                <div>
+                  <h4 class="font-bold text-loft-dark">Brunch Royal</h4>
+                  <p class="text-xs text-loft-gray-muted">Experience for 2 people</p>
+                </div>
+                <div class="pt-2 border-t border-black/5">
+                  <span class="text-[9px] font-extrabold uppercase tracking-widest text-gold">Free for Top 5</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reward 2 -->
+            <div class="card-light group hover:border-gold transition-all duration-500 cursor-pointer relative overflow-hidden"
+                 [class.opacity-50]="userRank() > 5">
+              <div class="relative space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-loft-gray-light flex items-center justify-center text-loft-dark group-hover:scale-110 transition-transform">
+                  <lucide-icon [name]="IceCreamIcon" [size]="24"></lucide-icon>
+                </div>
+                <div>
+                  <h4 class="font-bold text-loft-dark">Fresh & Bites</h4>
+                  <p class="text-xs text-loft-gray-muted leading-tight">2 Mokhito + Pancake or Boule Bourgeois</p>
+                </div>
+                <div class="pt-2 border-t border-black/5 text-gold flex items-center gap-2">
+                  <span class="text-[9px] font-extrabold uppercase tracking-widest">Summer Special</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reward 3 -->
+            <div class="card-light group hover:border-gold transition-all duration-500 cursor-pointer relative overflow-hidden"
+                 [class.opacity-50]="userRank() > 5">
+              <div class="relative space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-loft-gray-light flex items-center justify-center text-loft-dark group-hover:scale-110 transition-transform">
+                  <lucide-icon [name]="GiftIcon" [size]="24"></lucide-icon>
+                </div>
+                <div>
+                  <h4 class="font-bold text-loft-dark">Sweet Duo</h4>
+                  <p class="text-xs text-loft-gray-muted">Frappuccino + Crepe</p>
+                </div>
+                <div class="pt-2 border-t border-black/5">
+                  <span class="text-[9px] font-extrabold uppercase tracking-widest text-gold">Elite Choice</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
       <!-- Loyalty Stats Card -->
       <div class="card-light space-y-6">
@@ -134,6 +211,10 @@ export class DashboardComponent implements OnInit {
   readonly FlameIcon = Flame;
   readonly CheckIcon = Check;
   readonly BellIcon = Bell;
+  readonly GiftIcon = Gift;
+  readonly UtensilsIcon = Utensils;
+  readonly IceCreamIcon = IceCream;
+  readonly StarIcon = Star;
 
   private authService = inject(AuthService);
   private loyaltyService = inject(LoyaltyService);
