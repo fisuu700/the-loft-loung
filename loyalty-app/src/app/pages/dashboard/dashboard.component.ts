@@ -147,12 +147,12 @@ import {
 
       <!-- Loyalty Stats Card -->
       <div class="card-light space-y-6">
-        <h3 class="text-2xl font-bold text-loft-dark" style="font-family: var(--font-playfair);">Loyalty Stats</h3>
+        <h3 class="text-2xl font-bold text-loft-dark" style="font-family: var(--font-playfair);">Standing</h3>
         
         <div class="flex items-end justify-between">
           <div class="space-y-1">
-            <p class="text-[10px] font-bold text-loft-gray-muted uppercase tracking-widest">Total Points</p>
-            <p class="text-6xl font-bold text-gold tracking-tighter">{{ profile()?.total_points || 0 }}</p>
+            <p class="text-[10px] font-bold text-loft-gray-muted uppercase tracking-widest">Your Rank</p>
+            <p class="text-6xl font-bold text-gold tracking-tighter">#{{ userRank() || '--' }}</p>
           </div>
           
           <div class="relative">
@@ -165,25 +165,13 @@ import {
         </div>
       </div>
 
-      <!-- Progress Card -->
-      <div class="card-light space-y-6">
+      <!-- Standing Card -->
+      <div class="card-light space-y-4">
         <p class="text-sm text-loft-gray-muted leading-relaxed">
-          You're close to unlocking your next complimentary artisanal coffee.
+          Keep visiting to improve your rank and unlock exclusive rewards.
         </p>
-
-        <div class="space-y-3">
-          <div class="flex justify-between items-end">
-            <span class="text-xs font-bold text-loft-dark uppercase tracking-widest">Progress</span>
-            <span class="text-sm font-bold text-gold">{{ pointsProgress() }}/100</span>
-          </div>
-          <div class="w-full h-2.5 bg-loft-gray-light rounded-full overflow-hidden">
-            <div 
-              class="h-full bg-gold transition-all duration-1000 ease-out rounded-full"
-              [style.width.%]="pointsProgress()"></div>
-          </div>
-          <p class="text-[11px] text-loft-gray-muted italic text-right">
-            Baqi <span class="font-bold text-loft-dark">{{ pointsToNextReward() }}</span> no9ta lel hadaf
-          </p>
+        <div class="pt-4 border-t border-black/5">
+           <span class="text-[10px] font-bold text-loft-dark uppercase tracking-[0.2em]">Official Loft Member</span>
         </div>
       </div>
 

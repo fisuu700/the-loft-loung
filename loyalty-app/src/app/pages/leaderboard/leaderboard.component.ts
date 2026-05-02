@@ -43,8 +43,7 @@ import { LucideAngularModule } from 'lucide-angular';
 
         <div class="mt-6 pt-6 border-t border-black/5 flex items-center justify-center">
           <div class="text-center">
-            <p class="text-4xl font-bold text-gold tracking-tighter" style="font-family: var(--font-playfair);">{{ monthlyPoints().toLocaleString() || 0 }}</p>
-            <p class="text-[10px] font-bold text-loft-gray-muted uppercase tracking-widest mt-1">Points</p>
+            <p class="text-[10px] font-bold text-loft-gray-muted uppercase tracking-widest mt-1">Official Ranking</p>
           </div>
         </div>
       </div>
@@ -78,7 +77,7 @@ import { LucideAngularModule } from 'lucide-angular';
                 </div>
 
                 <div class="text-right">
-                  <p class="text-gold font-bold text-sm">{{ entry.points_count.toLocaleString() }}</p>
+                  <p class="text-gold font-bold text-xs">Active Member</p>
                 </div>
               </div>
             } @empty {
