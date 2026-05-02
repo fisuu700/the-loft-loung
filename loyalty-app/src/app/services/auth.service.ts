@@ -102,26 +102,34 @@ export class AuthService {
   private async ensureProfile(user: User) {
     const { data: existingProfile } = await this.supabaseService.client
       .from('profiles')
-      .select('id')
+      .select('id, username')
       .eq('id', user.id)
       .single();
 
-    if (!existingProfile) {
-      const username = user.user_metadata?.['full_name']
-        || user.user_metadata?.['name']
-        || user.email?.split('@')[0]
-        || 'Loft Member';
+    const metadataName = user.user_metadata?.['full_name']
+      || user.user_metadata?.['name']
+      || user.user_metadata?.['display_name']
+      || user.email?.split('@')[0];
+    
+    const finalName = metadataName || 'Loft Member';
 
+    if (!existingProfile) {
       const avatar = user.user_metadata?.['avatar_url']
         || user.user_metadata?.['picture']
         || null;
 
       await this.supabaseService.client.from('profiles').insert({
         id: user.id,
-        username,
+        username: finalName,
         avatar_url: avatar,
         total_points: 0
       });
+    } else if (existingProfile.username === 'Loft Member' && metadataName) {
+      // Update existing placeholder name if we now have a real one
+      await this.supabaseService.client
+        .from('profiles')
+        .update({ username: metadataName })
+        .eq('id', user.id);
     }
   }
 
