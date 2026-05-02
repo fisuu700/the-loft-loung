@@ -77,7 +77,8 @@ import { LucideAngularModule } from 'lucide-angular';
                 </div>
 
                 <div class="text-right">
-                  <p class="text-gold font-bold text-xs">Active Member</p>
+                  <p class="text-gold font-bold text-sm">{{ entry.points_count.toLocaleString() }}</p>
+                  <p class="text-[8px] font-bold text-loft-gray-muted uppercase tracking-widest">Points</p>
                 </div>
               </div>
             } @empty {
