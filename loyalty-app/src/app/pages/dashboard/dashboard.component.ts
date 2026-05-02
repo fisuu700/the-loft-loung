@@ -151,8 +151,11 @@ import {
         
         <div class="flex items-end justify-between">
           <div class="space-y-1">
-            <p class="text-[10px] font-bold text-loft-gray-muted uppercase tracking-widest">Your Rank</p>
-            <p class="text-6xl font-bold text-gold tracking-tighter">#{{ userRank() || '--' }}</p>
+            <div class="flex flex-col">
+              <span class="text-[10px] font-bold text-loft-gray-muted uppercase tracking-widest">Rank #{{ userRank() || '--' }}</span>
+              <p class="text-5xl font-bold text-gold tracking-tighter">{{ profile()?.total_points || 0 }}</p>
+              <span class="text-[9px] font-bold text-loft-gray-muted uppercase tracking-widest">Total Points</span>
+            </div>
           </div>
           
           <div class="relative">
