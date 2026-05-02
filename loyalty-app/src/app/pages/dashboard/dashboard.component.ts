@@ -293,8 +293,13 @@ export class DashboardComponent implements OnInit {
         (pos) => resolve(pos),
         (err) => {
           console.error('GPS Error:', err);
-          if (err.code === 1) alert("Lezem ta3ti permission lel GPS f telifonek!");
-          if (err.code === 3) alert("El GPS khda barcha wa9t, jarreb mara okhra f blasa feha reseau.");
+          if (err.code === 1) {
+            alert("El permission mta3 el GPS matlouba. Thabet f 'Settings' mta3 telifonek (Chrome/Safari) enno el Localisation 'Allow' (Masmou7 biha).");
+          } else if (err.code === 3) {
+            alert("El GPS khda barcha wa9t (Timeout). Jarreb mara okhra f blasa feha reseau 9wi.");
+          } else {
+            alert("Mochkel f el GPS: " + err.message);
+          }
           resolve(null);
         },
         {
