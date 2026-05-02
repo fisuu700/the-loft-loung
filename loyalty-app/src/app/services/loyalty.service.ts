@@ -85,26 +85,41 @@ export class LoyaltyService {
       // Get fresh points to avoid overwriting with stale local state
       const { data: profileData, error: fetchError } = await this.supabaseService.client
         .from('profiles')
-        .select('total_points')
+        .select('total_points, id')
         .eq('id', user.id)
         .single();
 
       if (fetchError) {
-        alert("Erreur fetch points: " + fetchError.message);
+        alert("Erreur fetch profile: " + fetchError.message);
         throw fetchError;
       }
 
-      const currentPoints = profileData?.total_points || 0;
+      if (!profileData) {
+        alert("Profile mouch mawjoud l asel! ID: " + user.id);
+        return false;
+      }
+
+      const currentPoints = profileData.total_points || 0;
+      const newPoints = currentPoints + 10;
+      
+      alert("Points l9dom: " + currentPoints + " -> Jdod: " + newPoints);
 
       // Add 10 points to profile
-      const { error: updateError } = await this.supabaseService.client
+      const { data: updateData, error: updateError } = await this.supabaseService.client
         .from('profiles')
-        .update({ total_points: currentPoints + 10 })
-        .eq('id', user.id);
+        .update({ total_points: newPoints })
+        .eq('id', user.id)
+        .select();
 
       if (updateError) {
-        alert("Erreur update points (RLS?): " + updateError.message);
+        alert("Erreur update points: " + updateError.message);
         throw updateError;
+      }
+
+      if (!updateData || updateData.length === 0) {
+        alert("Update saret ama 7atta row matbadel! (0 rows affected)");
+      } else {
+        alert("Update mrigla! Jdid f DB: " + updateData[0].total_points);
       }
 
       // Refresh state
