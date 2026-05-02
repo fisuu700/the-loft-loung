@@ -200,6 +200,10 @@ export class LoyaltyService {
       }, {});
 
       const sorted = Object.values(grouped)
+        .map((entry: any) => ({
+          ...entry,
+          points_count: entry.points_count * 10 // Multiply by 10 to match dashboard points
+        }))
         .sort((a: any, b: any) => b.points_count - a.points_count)
         .slice(0, 5);
 
@@ -231,7 +235,7 @@ export class LoyaltyService {
 
       const rank = sorted.findIndex(([uid]) => uid === user.id);
       this._userRank.set(rank >= 0 ? rank + 1 : null);
-      this._monthlyPoints.set(grouped[user.id] || 0);
+      this._monthlyPoints.set((grouped[user.id] || 0) * 10); // Multiply by 10
     }
   }
 
