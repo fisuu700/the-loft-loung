@@ -37,7 +37,7 @@ import {
       <div class="space-y-4">
         @if (!todayCheckedIn()) {
           <button 
-            (click)="startScanner()"
+            (click)="performCheckInWithLocation()"
             [disabled]="isChecking()"
             class="w-full bg-loft-dark text-white rounded-2xl py-5 px-6 flex items-center justify-center gap-3 shadow-xl shadow-black/10 transition-transform active:scale-95 border border-loft-gold/30 disabled:opacity-50">
             @if (isChecking()) {
@@ -186,22 +186,7 @@ import {
         </div>
       </div>
 
-      <!-- Scanner Modal -->
-      @if (isScanning()) {
-        <div class="fixed inset-0 z-[100] bg-black/90 flex flex-col items-center justify-center p-6 backdrop-blur-sm">
-          <div id="reader" class="w-full max-w-sm rounded-3xl overflow-hidden border-2 border-loft-gold/50"></div>
-          
-          @if (errorMessage()) {
-            <div class="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-xs text-center max-w-sm">
-              {{ errorMessage() }}
-            </div>
-          }
 
-          <button (click)="stopScanner()" class="mt-8 text-white font-bold uppercase tracking-widest text-sm flex items-center gap-2 px-6 py-3 border border-white/20 rounded-full">
-            Annuler
-          </button>
-        </div>
-      }
       <!-- Bottom Spacer for Navigation -->
       <div class="h-40 md:col-span-2 lg:col-span-4"></div>
       </div>
@@ -236,7 +221,7 @@ export class DashboardComponent implements OnInit {
   // Cafe Location (The Loft Lounge placeholder)
   private readonly CAFE_LAT = 35.033274;
   private readonly CAFE_LNG = 9.474314;
-  private readonly MAX_DISTANCE_METERS = 200;
+  private readonly MAX_DISTANCE_METERS = 15;
 
   private html5QrCode: any;
 
@@ -268,53 +253,31 @@ export class DashboardComponent implements OnInit {
     ]);
   }
 
-  async startScanner() {
+  async performCheckInWithLocation() {
     this.errorMessage.set(null);
-    this.isScanning.set(true);
+    this.isChecking.set(true);
     
-    // Check geolocation first to see if they are even close
+    // Check geolocation
     const pos = await this.getCurrentPosition();
     if (!pos) {
       this.errorMessage.set('Lezem t7el el GPS mte3ek bech nthabtou fik fel Loft!');
-      this.isScanning.set(false);
+      this.isChecking.set(false);
       return;
     }
 
     const dist = this.getDistance(pos.coords.latitude, pos.coords.longitude, this.CAFE_LAT, this.CAFE_LNG);
     if (dist > this.MAX_DISTANCE_METERS) {
-      this.errorMessage.set(`Yodhorli rak mouch fel Loft tawa (Distance: ${Math.round(dist)}m). Edkhol lel 9ahwa bech t-scanni!`);
-      this.isScanning.set(false);
+      this.errorMessage.set(`Yodhorli rak mouch fel Loft tawa (Distance: ${Math.round(dist)}m). Edkhol lel 9ahwa bech t-sajel!`);
+      this.isChecking.set(false);
       return;
     }
 
-    // Start Camera
-    const { Html5Qrcode } = await import('html5-qrcode');
-    setTimeout(() => {
-      this.html5QrCode = new Html5Qrcode('reader');
-      this.html5QrCode.start(
-        { facingMode: 'environment' },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        (decodedText: string) => {
-          if (decodedText === 'LOFT_LOUNGE_PROMO_2024') {
-            this.stopScanner();
-            this.doCheckIn();
-          } else {
-            this.errorMessage.set('QR Code ghalet! Thabet mel code mta3 el Loft Lounge.');
-          }
-        },
-        () => {}
-      ).catch((err: any) => {
-        this.errorMessage.set('Mochkel fil camera! Thabet mel permissions.');
-        this.isScanning.set(false);
-      });
-    }, 100);
+    // Direct check-in if distance is OK
+    await this.doCheckIn();
   }
 
   stopScanner() {
-    if (this.html5QrCode) {
-      this.html5QrCode.stop().catch(() => {});
-      this.isScanning.set(false);
-    }
+    this.isScanning.set(false);
   }
 
   private getCurrentPosition(): Promise<GeolocationPosition | null> {
