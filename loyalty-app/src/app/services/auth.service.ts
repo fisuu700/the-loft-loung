@@ -74,7 +74,7 @@ export class AuthService {
     const { error } = await this.supabaseService.client.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/app/'
+        redirectTo: window.location.origin + '/app/#/dashboard'
       }
     });
     if (error) throw error;
@@ -84,7 +84,7 @@ export class AuthService {
     const { error } = await this.supabaseService.client.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: window.location.origin + '/app/'
+        emailRedirectTo: window.location.origin + '/app/#/dashboard'
       }
     });
     if (error) throw error;
