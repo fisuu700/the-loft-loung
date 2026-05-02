@@ -78,8 +78,16 @@ export class LoyaltyService {
 
       if (checkInError) throw checkInError;
 
+      // Get fresh points to avoid overwriting with stale local state
+      const { data: profileData } = await this.supabaseService.client
+        .from('profiles')
+        .select('total_points')
+        .eq('id', user.id)
+        .single();
+
+      const currentPoints = profileData?.total_points || 0;
+
       // Add 10 points to profile
-      const currentPoints = this.authService.profile()?.total_points || 0;
       const { error: updateError } = await this.supabaseService.client
         .from('profiles')
         .update({ total_points: currentPoints + 10 })
@@ -91,6 +99,7 @@ export class LoyaltyService {
       this._todayCheckedIn.set(true);
       await this.authService.loadProfile(user.id);
       await this.calculateStreak();
+      await this.loadLeaderboard(); // Refresh monthly points and rank
 
       return true;
     } catch (error) {
