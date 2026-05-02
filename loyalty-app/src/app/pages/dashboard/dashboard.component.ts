@@ -2,7 +2,13 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { LoyaltyService } from '../../services/loyalty.service';
-import { LucideAngularModule } from 'lucide-angular';
+import { 
+  LucideAngularModule, 
+  UserCheck, 
+  Flame, 
+  Check,
+  Bell
+} from 'lucide-angular';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,14 +28,36 @@ import { LucideAngularModule } from 'lucide-angular';
         </p>
       </div>
 
-      <!-- Action Button -->
-      <button 
-        (click)="startScanner()"
-        [disabled]="isChecking()"
-        class="w-full bg-loft-dark text-white rounded-2xl py-5 px-6 flex items-center justify-center gap-3 shadow-xl shadow-black/10 transition-transform active:scale-95 border border-loft-gold/30">
-        <lucide-icon name="user-check" [size]="20" class="text-gold"></lucide-icon>
-        <span class="font-bold uppercase tracking-[0.2em] text-sm">Sajel Hdhoreck</span>
-      </button>
+      <!-- Action Section -->
+      <div class="space-y-4">
+        @if (!todayCheckedIn()) {
+          <button 
+            (click)="startScanner()"
+            [disabled]="isChecking()"
+            class="w-full bg-loft-dark text-white rounded-2xl py-5 px-6 flex items-center justify-center gap-3 shadow-xl shadow-black/10 transition-transform active:scale-95 border border-loft-gold/30 disabled:opacity-50">
+            @if (isChecking()) {
+              <div class="w-5 h-5 border-2 border-gold/30 border-t-gold rounded-full animate-spin"></div>
+            } @else {
+              <lucide-icon [name]="UserCheckIcon" [size]="20" class="text-gold"></lucide-icon>
+            }
+            <span class="font-bold uppercase tracking-[0.2em] text-sm">Sajel Hdhoreck</span>
+          </button>
+          
+          @if (errorMessage()) {
+            <p class="text-[10px] text-red-500 text-center font-bold uppercase tracking-widest animate-shake">
+              {{ errorMessage() }}
+            </p>
+          }
+        } @else {
+          <div class="w-full bg-green-50 border border-green-100 rounded-2xl py-6 px-4 text-center animate-scale-in">
+            <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg shadow-green-200">
+              <lucide-icon [name]="CheckIcon" [size]="24" class="text-white"></lucide-icon>
+            </div>
+            <h3 class="text-green-800 font-bold uppercase tracking-widest text-sm">Presence Mseila!</h3>
+            <p class="text-green-600/70 text-[10px] font-medium mt-1">Ya3tik esaha, nchoufouk ghodwa!</p>
+          </div>
+        }
+      </div>
 
       <!-- Interior Placeholder -->
       <div class="w-full aspect-[16/10] bg-loft-gray-light rounded-2xl overflow-hidden relative group">
@@ -50,7 +78,7 @@ import { LucideAngularModule } from 'lucide-angular';
           
           <div class="relative">
             <div class="bg-[#F8F5EE] rounded-full px-4 py-2 flex items-center gap-2 border border-loft-gold/10">
-              <lucide-icon name="flame" [size]="16" class="text-gold"></lucide-icon>
+              <lucide-icon [name]="FlameIcon" [size]="16" class="text-gold"></lucide-icon>
               <span class="text-xs font-bold text-gold uppercase tracking-widest">{{ streak() }} Days</span>
             </div>
             <span class="text-[9px] text-loft-gray-muted font-bold block mt-1 text-right w-full">Current Streak</span>
@@ -60,7 +88,6 @@ import { LucideAngularModule } from 'lucide-angular';
 
       <!-- Progress Card -->
       <div class="card-light space-y-6">
-        <h3 class="text-2xl font-bold text-loft-dark" style="font-family: var(--font-playfair);">Ahwen 9ahwa blech</h3>
         <p class="text-sm text-loft-gray-muted leading-relaxed">
           You're close to unlocking your next complimentary artisanal coffee.
         </p>
@@ -85,6 +112,13 @@ import { LucideAngularModule } from 'lucide-angular';
       @if (isScanning()) {
         <div class="fixed inset-0 z-[100] bg-black/90 flex flex-col items-center justify-center p-6 backdrop-blur-sm">
           <div id="reader" class="w-full max-w-sm rounded-3xl overflow-hidden border-2 border-loft-gold/50"></div>
+          
+          @if (errorMessage()) {
+            <div class="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-xs text-center max-w-sm">
+              {{ errorMessage() }}
+            </div>
+          }
+
           <button (click)="stopScanner()" class="mt-8 text-white font-bold uppercase tracking-widest text-sm flex items-center gap-2 px-6 py-3 border border-white/20 rounded-full">
             Annuler
           </button>
@@ -94,6 +128,11 @@ import { LucideAngularModule } from 'lucide-angular';
   `
 })
 export class DashboardComponent implements OnInit {
+  readonly UserCheckIcon = UserCheck;
+  readonly FlameIcon = Flame;
+  readonly CheckIcon = Check;
+  readonly BellIcon = Bell;
+
   private authService = inject(AuthService);
   private loyaltyService = inject(LoyaltyService);
 
@@ -112,7 +151,7 @@ export class DashboardComponent implements OnInit {
   // Cafe Location (The Loft Lounge placeholder)
   private readonly CAFE_LAT = 36.81897;
   private readonly CAFE_LNG = 10.18166;
-  private readonly MAX_DISTANCE_METERS = 15;
+  private readonly MAX_DISTANCE_METERS = 50;
 
   private html5QrCode: any;
 

@@ -8,7 +8,8 @@ import {
   Trophy, 
   User, 
   Settings, 
-  Coffee 
+  Coffee,
+  Bell 
 } from 'lucide-angular';
 
 @Component({
@@ -40,7 +41,7 @@ import {
             <h1 class="text-xl font-bold italic" style="font-family: var(--font-playfair);">The Loft</h1>
           </div>
           <button class="w-10 h-10 flex items-center justify-center text-loft-gray-muted">
-            <lucide-icon name="bell" [size]="24"></lucide-icon>
+            <lucide-icon [name]="BellIcon" [size]="24"></lucide-icon>
           </button>
         </header>
       }
@@ -78,6 +79,7 @@ export class App {
   readonly UserIcon = User;
   readonly SettingsIcon = Settings;
   readonly CoffeeIcon = Coffee;
+  readonly BellIcon = Bell;
 
   constructor(public authService: AuthService) {}
 }
