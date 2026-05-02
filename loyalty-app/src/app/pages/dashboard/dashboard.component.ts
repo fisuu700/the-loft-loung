@@ -202,6 +202,8 @@ import {
           </button>
         </div>
       }
+      <!-- Bottom Spacer for Navigation -->
+      <div class="h-40 md:col-span-2 lg:col-span-4"></div>
       </div>
     </div>
   `

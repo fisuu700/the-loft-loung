@@ -97,6 +97,9 @@ import { LucideAngularModule } from 'lucide-angular';
           Leaderboard updates monthly. <br>
           Keep visitng to climb the ranks!
         </p>
+
+        <!-- Bottom Spacer -->
+        <div class="h-32 md:col-span-2 lg:col-span-3"></div>
       </div>
     </div>
   `
