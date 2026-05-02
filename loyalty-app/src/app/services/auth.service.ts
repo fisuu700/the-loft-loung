@@ -118,18 +118,21 @@ export class AuthService {
         || user.user_metadata?.['picture']
         || null;
 
-      await this.supabaseService.client.from('profiles').insert({
+      const { error } = await this.supabaseService.client.from('profiles').insert({
         id: user.id,
         username: finalName,
         avatar_url: avatar,
         total_points: 0
       });
-    } else if (existingProfile.username === 'Loft Member' && metadataName) {
-      // Update existing placeholder name if we now have a real one
-      await this.supabaseService.client
+      if (error) alert("Erreur insert profile: " + error.message);
+    } else if (existingProfile.username !== metadataName && metadataName) {
+      // alert("Nouvel esm l9inah: " + metadataName);
+      const { error } = await this.supabaseService.client
         .from('profiles')
         .update({ username: metadataName })
         .eq('id', user.id);
+      
+      if (error) alert("Erreur update username (RLS?): " + error.message);
     }
   }
 
