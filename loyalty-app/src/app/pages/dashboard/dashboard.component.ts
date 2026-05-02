@@ -283,12 +283,26 @@ export class DashboardComponent implements OnInit {
 
   private getCurrentPosition(): Promise<GeolocationPosition | null> {
     return new Promise((resolve) => {
-      if (!navigator.geolocation) return resolve(null);
-      navigator.geolocation.getCurrentPosition(resolve, () => resolve(null), {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
-      });
+      if (!navigator.geolocation) {
+        console.error('Geolocation not supported');
+        return resolve(null);
+      }
+      
+      // Increased timeout for iOS/Indoor locks
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolve(pos),
+        (err) => {
+          console.error('GPS Error:', err);
+          if (err.code === 1) alert("Lezem ta3ti permission lel GPS f telifonek!");
+          if (err.code === 3) alert("El GPS khda barcha wa9t, jarreb mara okhra f blasa feha reseau.");
+          resolve(null);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0
+        }
+      );
     });
   }
 
