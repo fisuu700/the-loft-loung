@@ -9,8 +9,8 @@ import { LucideAngularModule } from 'lucide-angular';
   standalone: true,
   imports: [CommonModule, LucideAngularModule],
   template: `
-    <div class="animate-fade-in">
-      <div class="max-w-7xl mx-auto px-6 py-4 md:py-12 space-y-10 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-10">
+    <div class="animate-fade-in px-10 py-10">
+      <div class="w-full space-y-12 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12">
         
         <!-- Leaderboard Header -->
         <div class="text-center space-y-4 md:col-span-2 lg:col-span-3">

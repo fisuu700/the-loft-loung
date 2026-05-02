@@ -27,7 +27,7 @@ import {
       
       <!-- Top Header (Sticky) -->
       @if (authService.isLoggedIn()) {
-        <header class="sticky top-0 z-50 bg-loft-marble/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+        <header class="sticky top-0 z-50 bg-loft-marble/80 backdrop-blur-md px-10 py-6 flex items-center justify-between border-b border-black/5">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full border-2 border-loft-gold overflow-hidden">
                @if (authService.profile()?.avatar_url) {
@@ -53,7 +53,7 @@ import {
 
       <!-- Bottom Navigation (Light Premium) -->
       @if (authService.isLoggedIn()) {
-        <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-black/5 px-8 py-3 z-50 flex items-center justify-between safe-bottom">
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-black/5 px-8 py-3 z-50 flex items-center justify-around safe-bottom">
           <a routerLink="/dashboard" routerLinkActive="nav-active-gold" class="flex flex-col items-center gap-1 text-loft-gray-muted transition-all">
             <lucide-icon [name]="HomeIcon" [size]="20"></lucide-icon>
             <span class="text-[9px] font-bold uppercase tracking-widest">Dashboard</span>
