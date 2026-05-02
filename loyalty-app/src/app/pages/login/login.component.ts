@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -118,10 +118,13 @@ export class LoginComponent {
     private authService: AuthService,
     private router: Router
   ) {
-    // If already logged in, redirect
-    if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/dashboard']);
-    }
+    // Reactively redirect to dashboard when login state becomes true
+    // This is crucial for OAuth flows where session is parsed asynchronously after component init
+    effect(() => {
+      if (this.authService.isLoggedIn()) {
+        this.router.navigate(['/dashboard']);
+      }
+    });
   }
 
   async loginWithGoogle() {
