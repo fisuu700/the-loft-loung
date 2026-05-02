@@ -2,103 +2,105 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoyaltyService } from '../../services/loyalty.service';
 import { AuthService } from '../../services/auth.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-leaderboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   template: `
-    <div class="min-h-screen pb-24 px-4 pt-6 relative overflow-hidden">
-      <!-- Background Ambient -->
-      <div class="absolute top-0 right-0 w-[400px] h-[400px] opacity-10 pointer-events-none"
-           style="background: radial-gradient(circle, #D4AF37 0%, transparent 70%)"></div>
-
-      <div class="relative z-10 mb-8 animate-slide-up">
-        <h1 class="text-3xl font-bold text-gradient-gold" style="font-family: var(--font-playfair);">
-          Elite Monthly
-        </h1>
-        <p class="text-loft-text-muted text-sm mt-1">Ranking mte3 el chhar 🏆</p>
+    <div class="px-6 py-4 space-y-10 animate-fade-in">
+      
+      <!-- Leaderboard Header -->
+      <div class="text-center space-y-4">
+        <h2 class="text-5xl font-bold text-loft-dark leading-tight" style="font-family: var(--font-playfair);">
+          Ranking mte3 <br>
+          <span class="italic text-gold">el chhar</span>
+        </h2>
+        <p class="text-sm text-loft-gray-muted font-medium max-w-[250px] mx-auto leading-relaxed">
+          Discover the top patrons of The Loft Lounge this month. Elevate your experience and climb the ranks.
+        </p>
       </div>
 
-      <!-- User Ranking Info -->
-      <div class="relative z-10 glass-gold rounded-3xl p-6 mb-8 animate-scale-in">
-        <div class="flex items-center gap-4">
-          <div class="w-16 h-16 rounded-2xl bg-loft-dark flex items-center justify-center border border-loft-gold/20">
-            @if (userRank()) {
-              <span class="text-2xl font-bold text-loft-gold">#{{ userRank() }}</span>
+      <!-- User Standing Card -->
+      <div class="card-light border-2 border-loft-gold/10 relative overflow-hidden">
+        <div class="absolute -right-4 -top-4 w-24 h-24 bg-gold/5 rounded-full blur-2xl"></div>
+        
+        <div class="flex items-center gap-5 relative z-10">
+          <div class="w-16 h-16 rounded-2xl border-2 border-loft-gold flex items-center justify-center bg-white shadow-sm overflow-hidden">
+             @if (authService.profile()?.avatar_url) {
+              <img [src]="authService.profile()?.avatar_url" alt="avatar" class="w-full h-full object-cover">
             } @else {
-              <span class="text-2xl">🏅</span>
+              <div class="text-2xl font-bold text-gold">#{{ userRank() || '?' }}</div>
             }
           </div>
-          <div>
-            <p class="text-loft-text-muted text-xs uppercase tracking-wider">Your Standing</p>
-            <h2 class="text-xl font-bold">
-              @if (userRank()) {
-                Inti ranked #{{ userRank() }}
-              } @else {
-                Mazelt mouch ranked
-              }
-            </h2>
-            <p class="text-loft-text-muted text-xs mt-1">
-              {{ monthlyPoints() }} points hedha el chhar
-            </p>
+          <div class="space-y-1">
+            <h3 class="font-bold text-lg text-loft-dark">Enti rak ranked <span class="text-gold">#{{ userRank() || '--' }}</span></h3>
+            <p class="text-[11px] text-loft-gray-muted font-medium leading-tight">Keep enjoying your time to <br> reach the top 10.</p>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-6 border-t border-black/5 flex items-center justify-center">
+          <div class="text-center">
+            <p class="text-4xl font-bold text-gold tracking-tighter" style="font-family: var(--font-playfair);">{{ monthlyPoints()?.toLocaleString() || 0 }}</p>
+            <p class="text-[10px] font-bold text-loft-gray-muted uppercase tracking-widest mt-1">Points</p>
           </div>
         </div>
       </div>
 
-      <!-- Leaderboard List -->
-      <div class="relative z-10 space-y-4">
-        <h3 class="text-sm font-semibold text-loft-text-muted uppercase tracking-wider mb-4 px-2">Top 5 Members</h3>
+      <!-- Top Members List -->
+      <div class="space-y-6">
+        <h3 class="text-2xl font-bold text-loft-dark px-2" style="font-family: var(--font-playfair);">Top 5 Members</h3>
         
-        @for (entry of leaderboard(); track entry.username; let i = $index) {
-          <div class="card-premium flex items-center gap-4 animate-slide-up" [style.animation-delay]="(i * 0.1) + 's'">
-            <div class="w-8 text-center font-bold" [class.text-loft-gold]="i < 3">
-              {{ i + 1 }}
-            </div>
-            
-            <div class="w-12 h-12 rounded-full overflow-hidden border-2" 
-                 [class.border-loft-gold]="i === 0"
-                 [class.border-loft-border]="i !== 0">
-              @if (entry.avatar_url) {
-                <img [src]="entry.avatar_url" alt="avatar" class="w-full h-full object-cover">
-              } @else {
-                <div class="w-full h-full bg-loft-dark flex items-center justify-center text-sm font-bold">
-                  {{ entry.username[0] | uppercase }}
+        <div class="card-light !p-0 overflow-hidden">
+          <div class="divide-y divide-black/5">
+            @for (entry of leaderboard(); track entry.username; let i = $index) {
+              <div class="flex items-center gap-4 p-4 transition-colors hover:bg-black/[0.01]">
+                <div class="w-8 text-center font-bold text-xl" [class.text-gold]="i === 0" [class.text-loft-gray-muted]="i > 0">
+                  {{ i + 1 }}
                 </div>
-              }
-            </div>
+                
+                <div class="w-12 h-12 rounded-xl overflow-hidden border border-black/5">
+                  @if (entry.avatar_url) {
+                    <img [src]="entry.avatar_url" alt="avatar" class="w-full h-full object-cover">
+                  } @else {
+                    <div class="w-full h-full bg-loft-gray-light flex items-center justify-center text-sm font-bold text-loft-gray-muted">
+                      {{ entry.username[0] | uppercase }}
+                    </div>
+                  }
+                </div>
 
-            <div class="flex-1">
-              <p class="font-bold text-base">{{ entry.username }}</p>
-              <div class="flex items-center gap-1">
-                <span class="text-[10px] uppercase text-loft-text-muted tracking-tighter">Elite Member</span>
-                @if (i === 0) { <span class="text-xs">👑</span> }
+                <div class="flex-1">
+                  <p class="font-bold text-sm text-loft-dark">{{ entry.username }}</p>
+                  <p class="text-[10px] font-bold text-loft-gray-muted uppercase tracking-wider">
+                    {{ i === 0 ? 'Elite Member' : i < 3 ? 'Premium Member' : 'Member' }}
+                  </p>
+                </div>
+
+                <div class="text-right">
+                  <p class="text-gold font-bold text-sm">{{ entry.points_count?.toLocaleString() }}</p>
+                </div>
               </div>
-            </div>
-
-            <div class="text-right">
-              <p class="text-loft-gold font-bold text-lg">{{ entry.points_count }}</p>
-              <p class="text-[10px] text-loft-text-muted uppercase">Points</p>
-            </div>
+            } @empty {
+              <div class="p-12 text-center text-loft-gray-muted italic text-sm">
+                Mazel mafamma had ranked hedha el chhar...
+              </div>
+            }
           </div>
-        } @empty {
-          <div class="text-center py-12">
-            <p class="text-loft-text-muted italic">Mazel mafamma had ranked hedha el chhar...</p>
-          </div>
-        }
+        </div>
       </div>
 
-      <!-- Info Card -->
-      <div class="relative z-10 mt-10 card-premium border-dashed opacity-70">
-        <p class="text-xs text-center text-loft-text-muted">
-          El leaderboard yetbaddel kol awwel chhar. <br>
-          Lamm el n9at bach todhhor hna!
-        </p>
-      </div>
+      <!-- Info Footer -->
+      <div class="pt-4 pb-8">
+        <p class="text-[10px] text-center text-loft-gray-muted font-bold uppercase tracking-widest leading-relaxed">
+          Leaderboard updates monthly. <br>
+          Keep visitng to climb the ranks!
+        </div>
     </div>
   `
 })
 export class LeaderboardComponent implements OnInit {
+  public authService = inject(AuthService);
   private loyaltyService = inject(LoyaltyService);
   leaderboard = this.loyaltyService.leaderboard;
   userRank = this.loyaltyService.userRank;

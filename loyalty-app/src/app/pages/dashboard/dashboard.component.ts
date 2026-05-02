@@ -2,12 +2,96 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { LoyaltyService } from '../../services/loyalty.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './dashboard.component.html'
+  imports: [CommonModule, LucideAngularModule],
+  template: `
+    <div class="px-6 py-4 space-y-8 animate-fade-in">
+      
+      <!-- Welcome Section -->
+      <div class="text-center space-y-3">
+        <h2 class="text-5xl font-bold text-loft-dark leading-tight" style="font-family: var(--font-playfair);">
+          Marhba bik <br>
+          <span class="italic text-gold">{{ profile()?.username?.split(' ')?.[0] || 'Member' }}</span>
+        </h2>
+        <p class="text-sm text-loft-gray-muted font-medium max-w-[200px] mx-auto leading-relaxed">
+          Welcome back to your sanctuary. Ready to log today's visit?
+        </p>
+      </div>
+
+      <!-- Action Button -->
+      <button 
+        (click)="startScanner()"
+        [disabled]="isChecking()"
+        class="w-full bg-loft-dark text-white rounded-2xl py-5 px-6 flex items-center justify-center gap-3 shadow-xl shadow-black/10 transition-transform active:scale-95 border border-loft-gold/30">
+        <lucide-icon name="user-check" [size]="20" class="text-gold"></lucide-icon>
+        <span class="font-bold uppercase tracking-[0.2em] text-sm">Sajel Hdhoreck</span>
+      </button>
+
+      <!-- Interior Placeholder -->
+      <div class="w-full aspect-[16/10] bg-loft-gray-light rounded-2xl overflow-hidden relative group">
+        <div class="absolute inset-0 flex items-center justify-center">
+          <p class="text-xs text-loft-gray-muted font-bold tracking-widest uppercase opacity-40">The Loft Lounge Interior</p>
+        </div>
+      </div>
+
+      <!-- Loyalty Stats Card -->
+      <div class="card-light space-y-6">
+        <h3 class="text-2xl font-bold text-loft-dark" style="font-family: var(--font-playfair);">Loyalty Stats</h3>
+        
+        <div class="flex items-end justify-between">
+          <div class="space-y-1">
+            <p class="text-[10px] font-bold text-loft-gray-muted uppercase tracking-widest">Total Points</p>
+            <p class="text-6xl font-bold text-gold tracking-tighter">{{ profile()?.total_points || 0 }}</p>
+          </div>
+          
+          <div class="relative">
+            <div class="bg-[#F8F5EE] rounded-full px-4 py-2 flex items-center gap-2 border border-loft-gold/10">
+              <lucide-icon name="flame" [size]="16" class="text-gold"></lucide-icon>
+              <span class="text-xs font-bold text-gold uppercase tracking-widest">{{ streak() }} Days</span>
+            </div>
+            <span class="text-[9px] text-loft-gray-muted font-bold block mt-1 text-right w-full">Current Streak</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Card -->
+      <div class="card-light space-y-6">
+        <h3 class="text-2xl font-bold text-loft-dark" style="font-family: var(--font-playfair);">Ahwen 9ahwa blech</h3>
+        <p class="text-sm text-loft-gray-muted leading-relaxed">
+          You're close to unlocking your next complimentary artisanal coffee.
+        </p>
+
+        <div class="space-y-3">
+          <div class="flex justify-between items-end">
+            <span class="text-xs font-bold text-loft-dark uppercase tracking-widest">Progress</span>
+            <span class="text-sm font-bold text-gold">{{ pointsProgress() }}/100</span>
+          </div>
+          <div class="w-full h-2.5 bg-loft-gray-light rounded-full overflow-hidden">
+            <div 
+              class="h-full bg-gold transition-all duration-1000 ease-out rounded-full"
+              [style.width.%]="pointsProgress()"></div>
+          </div>
+          <p class="text-[11px] text-loft-gray-muted italic text-right">
+            Baqi <span class="font-bold text-loft-dark">{{ pointsToNextReward() }}</span> no9ta lel hadaf
+          </p>
+        </div>
+      </div>
+
+      <!-- Scanner Modal -->
+      @if (isScanning()) {
+        <div class="fixed inset-0 z-[100] bg-black/90 flex flex-col items-center justify-center p-6 backdrop-blur-sm">
+          <div id="reader" class="w-full max-w-sm rounded-3xl overflow-hidden border-2 border-loft-gold/50"></div>
+          <button (click)="stopScanner()" class="mt-8 text-white font-bold uppercase tracking-widest text-sm flex items-center gap-2 px-6 py-3 border border-white/20 rounded-full">
+            Annuler
+          </button>
+        </div>
+      }
+    </div>
+  `
 })
 export class DashboardComponent implements OnInit {
   private authService = inject(AuthService);

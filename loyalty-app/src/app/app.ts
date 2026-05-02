@@ -22,42 +22,51 @@ import {
     LucideAngularModule
   ],
   template: `
-    <div class="app-container max-w-md mx-auto bg-loft-black min-h-screen shadow-2xl relative shadow-loft-gold/5">
+    <div class="app-container max-w-md mx-auto bg-loft-marble min-h-screen shadow-2xl relative shadow-black/5">
       
+      <!-- Top Header (Sticky) -->
+      @if (authService.isLoggedIn()) {
+        <header class="sticky top-0 z-50 bg-loft-marble/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full border-2 border-loft-gold overflow-hidden">
+               @if (authService.profile()?.avatar_url) {
+                <img [src]="authService.profile()?.avatar_url" alt="avatar" class="w-full h-full object-cover">
+              } @else {
+                <div class="w-full h-full bg-loft-gray-light flex items-center justify-center text-sm font-bold text-loft-dark">
+                  {{ authService.profile()?.username?.[0] || '?' }}
+                </div>
+              }
+            </div>
+            <h1 class="text-xl font-bold italic" style="font-family: var(--font-playfair);">The Loft</h1>
+          </div>
+          <button class="w-10 h-10 flex items-center justify-center text-loft-gray-muted">
+            <lucide-icon name="bell" [size]="24"></lucide-icon>
+          </button>
+        </header>
+      }
+
       <!-- Main Content -->
-      <main class="animate-fade-in pb-20">
+      <main class="animate-fade-in pb-24">
         <router-outlet></router-outlet>
       </main>
 
-      <!-- Bottom Navigation (Hidden on Login) -->
+      <!-- Bottom Navigation (Light Premium) -->
       @if (authService.isLoggedIn()) {
-        <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto glass border-t border-loft-gold/10 px-6 py-3 z-50 flex items-center justify-between safe-bottom">
-          <a routerLink="/dashboard" routerLinkActive="nav-active" class="flex flex-col items-center gap-1 text-loft-text-muted transition-colors relative">
-            <lucide-icon [name]="HomeIcon" [size]="24"></lucide-icon>
-            <span class="text-[10px] font-medium uppercase tracking-widest">Home</span>
+        <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-black/5 px-8 py-3 z-50 flex items-center justify-between safe-bottom">
+          <a routerLink="/dashboard" routerLinkActive="nav-active-gold" class="flex flex-col items-center gap-1 text-loft-gray-muted transition-all">
+            <lucide-icon [name]="HomeIcon" [size]="20"></lucide-icon>
+            <span class="text-[9px] font-bold uppercase tracking-widest">Dashboard</span>
           </a>
           
-          <a routerLink="/leaderboard" routerLinkActive="nav-active" class="flex flex-col items-center gap-1 text-loft-text-muted transition-colors relative">
-            <lucide-icon [name]="TrophyIcon" [size]="24"></lucide-icon>
-            <span class="text-[10px] font-medium uppercase tracking-widest">Elite</span>
+          <a routerLink="/leaderboard" routerLinkActive="nav-active-gold" class="flex flex-col items-center gap-1 text-loft-gray-muted transition-all">
+            <lucide-icon [name]="TrophyIcon" [size]="20"></lucide-icon>
+            <span class="text-[9px] font-bold uppercase tracking-widest">Leaderboard</span>
           </a>
 
-          <!-- Center Action Button -->
-          <div class="w-12 h-12 -mt-10 bg-gradient-to-tr from-loft-gold to-loft-gold-light rounded-full shadow-lg shadow-loft-gold/20 flex items-center justify-center border-4 border-loft-black animate-float">
-             <lucide-icon [name]="CoffeeIcon" [size]="24" class="text-loft-black"></lucide-icon>
-          </div>
-
-          <a routerLink="/profile" routerLinkActive="nav-active" class="flex flex-col items-center gap-1 text-loft-text-muted transition-colors relative">
-            <lucide-icon [name]="UserIcon" [size]="24"></lucide-icon>
-            <span class="text-[10px] font-medium uppercase tracking-widest">Profile</span>
+          <a routerLink="/profile" routerLinkActive="nav-active-gold" class="flex flex-col items-center gap-1 text-loft-gray-muted transition-all">
+            <lucide-icon [name]="UserIcon" [size]="20"></lucide-icon>
+            <span class="text-[9px] font-bold uppercase tracking-widest">Profile</span>
           </a>
-
-          @if (authService.isAdmin()) {
-            <a routerLink="/admin" routerLinkActive="nav-active" class="flex flex-col items-center gap-1 text-loft-text-muted transition-colors relative">
-              <lucide-icon [name]="SettingsIcon" [size]="24"></lucide-icon>
-              <span class="text-[10px] font-medium uppercase tracking-widest">Admin</span>
-            </a>
-          }
         </nav>
       }
     </div>

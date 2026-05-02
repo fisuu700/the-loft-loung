@@ -17,20 +17,14 @@
   --color-loft-text: #f0f0f0;
   --color-loft-text-muted: #888888;
   
-  /* Premium Castle Park Colors */
-  --color-loft-sage: #8B9A7A;
-  --color-loft-sage-light: #A8B89D;
-  --color-loft-sage-dark: #6E7D5F;
-  --color-loft-pink: #E5A8C8;
-  --color-loft-pink-soft: #F3C0A2;
-  --color-loft-marble: #F5F5F0;
+  /* Premium Light Theme Colors */
+  --color-loft-gold: #C9A655;
+  --color-loft-gold-light: #DFBF7D;
+  --color-loft-dark: #2D2D2D;
+  --color-loft-marble: #F9F9F6;
   --color-loft-white: #FFFFFF;
-  --color-loft-dark-gray: #4A4A4A;
-  --color-loft-light-gray: #E8E8E8;
-
-  --color-loft-success: #34D399;
-  --color-loft-fire: #FF6B35;
-  --color-loft-purple: #A78BFA;
+  --color-loft-gray-light: #F1F1F1;
+  --color-loft-gray-muted: #8E8E8E;
 
   --font-outfit: 'Outfit', sans-serif;
   --font-playfair: 'Playfair Display', serif;
@@ -175,20 +169,29 @@ body {
   animation: glow-border 2s ease-in-out infinite;
 }
 
-/* ===== Glass Effect ===== */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(139, 154, 122, 0.2);
+/* ===== Card Light ===== */
+.card-light {
+  background: var(--color-loft-white);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
-.glass-light {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(250, 249, 245, 0.85));
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05), 0 2px 10px rgba(139, 154, 122, 0.1);
+.text-gold {
+  color: var(--color-loft-gold);
+}
+
+.bg-gold {
+  background-color: var(--color-loft-gold);
+}
+
+/* ===== Navigation Active State ===== */
+.nav-active-gold {
+  color: var(--color-loft-gold) !important;
+  border-top: 2px solid var(--color-loft-gold);
+  padding-top: 10px;
+  margin-top: -12px;
 }
 
 .glass-gold {
