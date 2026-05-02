@@ -68,6 +68,7 @@ export class LoyaltyService {
       // Double-check today's status
       await this.checkTodayStatus();
       if (this._todayCheckedIn()) {
+        alert("Rak salla7t hdhorek lyoum deja!");
         return false;
       }
 
@@ -76,14 +77,22 @@ export class LoyaltyService {
         .from('check_ins')
         .insert({ user_id: user.id });
 
-      if (checkInError) throw checkInError;
+      if (checkInError) {
+        alert("Erreur check-in: " + checkInError.message);
+        throw checkInError;
+      }
 
       // Get fresh points to avoid overwriting with stale local state
-      const { data: profileData } = await this.supabaseService.client
+      const { data: profileData, error: fetchError } = await this.supabaseService.client
         .from('profiles')
         .select('total_points')
         .eq('id', user.id)
         .single();
+
+      if (fetchError) {
+        alert("Erreur fetch points: " + fetchError.message);
+        throw fetchError;
+      }
 
       const currentPoints = profileData?.total_points || 0;
 
@@ -93,7 +102,10 @@ export class LoyaltyService {
         .update({ total_points: currentPoints + 10 })
         .eq('id', user.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        alert("Erreur update points (RLS?): " + updateError.message);
+        throw updateError;
+      }
 
       // Refresh state
       this._todayCheckedIn.set(true);
@@ -102,7 +114,7 @@ export class LoyaltyService {
       await this.loadLeaderboard(); // Refresh monthly points and rank
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Check-in error:', error);
       return false;
     } finally {
