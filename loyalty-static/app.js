@@ -199,26 +199,18 @@ async function performCheckIn() {
 }
 
 async function getLeaderboard() {
-    const { data: checkins, error } = await supabaseClient
-        .from('check_ins')
-        .select('user_id, profiles(username, avatar_url)');
+    const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('id, username, avatar_url, total_points')
+        .order('total_points', { ascending: false })
+        .gt('total_points', 0);
         
     if (error) return [];
 
-    const grouped = checkins.reduce((acc, item) => {
-        const uid = item.user_id;
-        if (!acc[uid]) {
-            acc[uid] = {
-                username: item.profiles?.username || 'Unknown',
-                avatar_url: item.profiles?.avatar_url,
-                user_id: uid,
-                points_count: 0
-            };
-        }
-        acc[uid].points_count += 10;
-        return acc;
-    }, {});
-
-    return Object.values(grouped)
-        .sort((a, b) => b.points_count - a.points_count);
+    return data.map(profile => ({
+        user_id: profile.id,
+        username: profile.username || 'Loft Member',
+        avatar_url: profile.avatar_url,
+        points_count: profile.total_points || 0
+    }));
 }

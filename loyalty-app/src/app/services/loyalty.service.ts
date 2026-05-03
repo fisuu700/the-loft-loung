@@ -118,14 +118,10 @@ export class LoyaltyService {
   async syncSystemStatus() {
     const user = this.authService.user();
     
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setHours(0, 0, 0, 0);
-
     const { data, error } = await this.supabaseService.client
-      .from('check_ins')
-      .select('user_id')
-      .gte('created_at', startOfMonth.toISOString());
+      .from('profiles')
+      .select('id, total_points')
+      .gt('total_points', 0);
 
     if (error) {
       console.error('Error syncing system status:', error);
@@ -133,21 +129,15 @@ export class LoyaltyService {
     }
 
     if (data) {
-      // Group by user_id
-      const grouped = data.reduce((acc: Record<string, number>, item: any) => {
-        acc[item.user_id] = (acc[item.user_id] || 0) + 1;
-        return acc;
-      }, {});
-
-      // Count how many users reached 150 points (15 check-ins)
-      const usersAtLimit = Object.values(grouped).filter(count => count * 10 >= MAX_MONTHLY_POINTS).length;
+      // Count how many users reached 150 points
+      const usersAtLimit = data.filter((p: any) => p.total_points >= MAX_MONTHLY_POINTS).length;
       
       this._usersAtLimitCount.set(usersAtLimit);
       this._systemClosed.set(usersAtLimit >= MAX_USERS_LIMIT);
 
       // Update current user points
       if (user) {
-        this._monthlyPoints.set((grouped[user.id] || 0) * 10);
+        this._monthlyPoints.set(data.find((p: any) => p.id === user.id)?.total_points || 0);
       }
     }
   }
@@ -196,40 +186,29 @@ export class LoyaltyService {
   async loadLeaderboard() {
     try {
       const { data, error } = await this.supabaseService.client
-        .from('check_ins')
-        .select('user_id, profiles(username, avatar_url)');
+        .from('profiles')
+        .select('id, username, avatar_url, total_points')
+        .order('total_points', { ascending: false })
+        .gt('total_points', 0);
 
       if (error) throw error;
 
       if (data) {
-        const grouped = data.reduce((acc: Record<string, any>, item: any) => {
-          const uid = item.user_id;
-          if (!acc[uid]) {
-            acc[uid] = {
-              username: item.profiles?.username || 'Loft Member',
-              avatar_url: item.profiles?.avatar_url,
-              user_id: uid,
-              points_count: 0
-            };
-          }
-          acc[uid].points_count += 10;
-          return acc;
-        }, {});
+        const mapped = data.map((p: any) => ({
+          user_id: p.id,
+          username: p.username || 'Loft Member',
+          avatar_url: p.avatar_url,
+          points_count: p.total_points || 0
+        }));
 
-        const sorted = Object.values(grouped)
-          .sort((a: any, b: any) => b.points_count - a.points_count);
-
-        this._leaderboard.set(sorted as LeaderboardEntry[]);
+        this._leaderboard.set(mapped as LeaderboardEntry[]);
         
-        // Calculate user rank from this monthly list
+        // Calculate user rank
         const user = this.authService.user();
         if (user) {
-          const allSorted = Object.entries(grouped)
-            .sort(([, a]: any, [, b]: any) => b.points_count - a.points_count);
-          
-          const rank = allSorted.findIndex(([uid]) => uid === user.id);
+          const rank = mapped.findIndex((p: any) => p.user_id === user.id);
           this._userRank.set(rank >= 0 ? rank + 1 : null);
-          this._monthlyPoints.set((grouped[user.id]?.points_count || 0));
+          this._monthlyPoints.set(mapped.find((p: any) => p.user_id === user.id)?.points_count || 0);
         }
       }
     } catch (error) {
