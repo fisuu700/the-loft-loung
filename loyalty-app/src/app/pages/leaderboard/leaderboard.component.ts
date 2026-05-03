@@ -37,7 +37,7 @@ import { LucideAngularModule } from 'lucide-angular';
           </div>
           <div class="space-y-1">
             <h3 class="font-bold text-lg text-loft-dark">Enti rak ranked <span class="text-gold">#{{ userRank() || '--' }}</span></h3>
-            <p class="text-[11px] text-loft-gray-muted font-medium leading-tight">Keep enjoying your time to <br> reach the top 5.</p>
+            <p class="text-[11px] text-loft-gray-muted font-medium leading-tight">Keep enjoying your time to <br> reach the top rank.</p>
           </div>
         </div>
 
@@ -50,7 +50,7 @@ import { LucideAngularModule } from 'lucide-angular';
 
       <!-- Top Members List -->
       <div class="space-y-6">
-        <h3 class="text-2xl font-bold text-loft-dark px-2" style="font-family: var(--font-playfair);">Top 5 Members</h3>
+        <h3 class="text-2xl font-bold text-loft-dark px-2" style="font-family: var(--font-playfair);">Rank of Members</h3>
         
         <div class="card-light !p-0 overflow-hidden">
           <div class="divide-y divide-black/5">

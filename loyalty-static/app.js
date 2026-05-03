@@ -225,6 +225,5 @@ async function getLeaderboard() {
     }, {});
 
     return Object.values(grouped)
-        .sort((a, b) => b.points_count - a.points_count)
-        .slice(0, 5);
+        .sort((a, b) => b.points_count - a.points_count);
 }

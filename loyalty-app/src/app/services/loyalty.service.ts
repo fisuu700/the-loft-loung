@@ -222,8 +222,7 @@ export class LoyaltyService {
         }, {});
 
         const sorted = Object.values(grouped)
-          .sort((a: any, b: any) => b.points_count - a.points_count)
-          .slice(0, 5);
+          .sort((a: any, b: any) => b.points_count - a.points_count);
 
         this._leaderboard.set(sorted as LeaderboardEntry[]);
         

@@ -29,7 +29,7 @@
 
         <!-- List -->
         <div id="leaderboardList" class="space-y-4 animate-up" style="animation-delay: 0.2s;">
-            <h3 class="text-[11px] font-bold text-[#888] uppercase tracking-widest mb-6 border-b border-[#eee] pb-2">Top 5 Members</h3>
+            <h3 class="text-[11px] font-bold text-[#888] uppercase tracking-widest mb-6 border-b border-[#eee] pb-2">Rank of Members</h3>
             <!-- Entries injected here -->
         </div>
 
@@ -60,7 +60,7 @@
             const list = document.getElementById('leaderboardList');
             const data = await getLeaderboard();
             
-            list.innerHTML = `<h3 class="text-[11px] font-bold text-[#888] uppercase tracking-widest mb-6 border-b border-[#eee] pb-2">Top 5 Members</h3>` + 
+            list.innerHTML = `<h3 class="text-[11px] font-bold text-[#888] uppercase tracking-widest mb-6 border-b border-[#eee] pb-2">Rank of Members</h3>` + 
                 data.map((entry, i) => `
                 <div class="card-clean flex items-center gap-4 p-4">
                     <div class="w-6 text-center font-bold ${i < 3 ? 'text-gold' : 'text-[#888]'}">${i+1}</div>
