@@ -195,14 +195,9 @@ export class LoyaltyService {
 
   async loadLeaderboard() {
     try {
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
-
       const { data, error } = await this.supabaseService.client
         .from('check_ins')
-        .select('user_id, profiles(username, avatar_url)')
-        .gte('created_at', startOfMonth.toISOString());
+        .select('user_id, profiles(username, avatar_url)');
 
       if (error) throw error;
 

@@ -15,11 +15,11 @@ import { LucideAngularModule } from 'lucide-angular';
         <!-- Leaderboard Header -->
         <div class="text-center space-y-4 md:col-span-2 lg:col-span-3">
         <h2 class="text-5xl font-bold text-loft-dark leading-tight" style="font-family: var(--font-playfair);">
-          Ranking mte3 <br>
-          <span class="italic text-gold">el chhar</span>
+          Ranking <br>
+          <span class="italic text-gold">Global</span>
         </h2>
         <p class="text-sm text-loft-gray-muted font-medium max-w-[250px] mx-auto leading-relaxed">
-          Discover the top patrons of The Loft Lounge this month. Elevate your experience and climb the ranks.
+          Discover the top patrons of The Loft Lounge of all time. Elevate your experience and climb the ranks.
         </p>
       </div>
 
@@ -83,7 +83,7 @@ import { LucideAngularModule } from 'lucide-angular';
               </div>
             } @empty {
               <div class="p-12 text-center text-loft-gray-muted italic text-sm">
-                Mazel mafamma had ranked hedha el chhar...
+                Mazel mafamma had ranked...
               </div>
             }
           </div>
@@ -142,7 +142,7 @@ import { LucideAngularModule } from 'lucide-angular';
       <!-- Info Footer -->
       <div class="pt-8 pb-8 md:col-span-2 lg:col-span-3">
         <p class="text-[10px] text-center text-loft-gray-muted font-bold uppercase tracking-widest leading-relaxed">
-          Leaderboard updates monthly. <br>
+          Leaderboard updates live. <br>
           Keep visitng to climb the ranks!
         </p>
 

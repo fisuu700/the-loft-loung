@@ -199,14 +199,9 @@ async function performCheckIn() {
 }
 
 async function getLeaderboard() {
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setHours(0,0,0,0);
-
     const { data: checkins, error } = await supabaseClient
         .from('check_ins')
-        .select('user_id, profiles(username, avatar_url)')
-        .gte('created_at', startOfMonth.toISOString());
+        .select('user_id, profiles(username, avatar_url)');
         
     if (error) return [];
 
